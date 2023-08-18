@@ -1,20 +1,142 @@
-\chapter{In ante nulla, vestibulum a}
-\label{cha:intro}
+\chapter{Dataset}
+\label{cha:dataset}
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sed nunc orci. Aliquam nec nisl vitae sapien pulvinar dictum quis non urna. Suspendisse at dui a erat aliquam vestibulum. Quisque ultrices pellentesque pellentesque. Pellentesque egestas quam sed blandit tempus. Sed congue nec risus posuere euismod. Maecenas ut lacus id mauris sagittis egestas a eu dui. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Pellentesque at ultrices tellus. Ut eu purus eget sem iaculis ultricies sed non lorem. Curabitur gravida dui eget ex vestibulum venenatis. Phasellus gravida tellus velit, non eleifend justo lobortis eget.
-\cite{coulouris}
+Most of the existing SISR methods are trained and evaluated on simulated datasets which assume simple and uniform degradation (i.e., bicubic degradation). Unfortunately, SISR models trained on such simulated datasets are hard to generalize to practical applications since the authentic degradations in real-world LR images are much more complex\cite{cai2019realworld}. Creating a large and varied enough dataset of real-world organic data of paired LR-HR images poses a challenge by itself, that being said the results of this reserch rely heavily on the quality of the data so a lot of work has gone into ensuring that the content of each pair of frames is consistent and reliable without sacrificing too many frames.
 
-Donec eu ipsum id lorem consectetur luctus ac a nisi. Curabitur volutpat, metus id porta ultrices, felis lacus consectetur justo, ut gravida arcu ex in purus. Pellentesque vitae sapien ac nisl porttitor pellentesque eu sed elit. Sed maximus lectus eu eros ultricies accumsan. Quisque congue, nisi in dictum cursus, ante nisl molestie eros, in ultrices eros tellus sit amet augue. Interdum et malesuada fames ac ante ipsum primis in faucibus. Nam finibus leo sit amet purus vehicula, eget facilisis turpis convallis. Vivamus varius tincidunt turpis, id venenatis arcu maximus ut. Aenean euismod eros ac nibh facilisis, nec imperdiet ex suscipit.
-\cite{dalal}
+The main problems regarding the creation of the LR-HR pairs from two different cameras can be synthetised in:
+\begin{itemize}
+  \item different lens distortion
+  \item temporal alignment
+  \item spatail alignment
+\end{itemize}
 
-\section{Pellentesque habitant morbi tristique senectus}
-\label{sec:context}
+Each issue has been addressed with different approaches which will be described in detail in the next sections.
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sed nunc orci. Aliquam nec nisl vitae sapien pulvinar dictum quis non urna. Suspendisse at dui a erat aliquam vestibulum. Quisque ultrices pellentesque pellentesque. Pellentesque egestas quam sed blandit tempus. Sed congue nec risus posuere euismod. Maecenas ut lacus id mauris sagittis egestas a eu dui. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Pellentesque at ultrices tellus. Ut eu purus eget sem iaculis ultricies sed non lorem. Curabitur gravida dui eget ex vestibulum venenatis. Phasellus gravida tellus velit, non eleifend justo lobortis eget.
-\cite{ictbusiness}
-\cite{donoho}
+It is important to point out that the entire dataset creation pipeline is built to be as general and reproducibile as possible, with any combinatin of cameras, and is not bound to the hardware used in this specific research.
 
-\section{Nullam et justo vitae nisi}
-\label{sec:problem}
+\section{Cameras}
+\label{sec:cameras}
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sed nunc orci. Aliquam nec nisl vitae sapien pulvinar dictum quis non urna. Suspendisse at dui a erat aliquam vestibulum. Quisque ultrices pellentesque pellentesque. Pellentesque egestas quam sed blandit tempus. Sed congue nec risus posuere euismod. Maecenas ut lacus id mauris sagittis egestas a eu dui. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Pellentesque at ultrices tellus. Ut eu purus eget sem iaculis ultricies sed non lorem. Curabitur gravida dui eget ex vestibulum venenatis. Phasellus gravida tellus velit, non eleifend justo lobortis eget.
+HR frames have been captured using a Runcam 2\cite{runcam}, the digital camera offers to record at 1920*1440@30, 1080p@60 and 720p@120. To compromise between resolution and frame rate all the HR clips have been recorded in FullHD 1920*1080 at 60 frames per second, although the camera is capable of capuring higher resolution images a lower frame rate would have made difficult to syncronize LR and HR frames resulting in a much lower amount of valid matches.
+\begin{figure}[h]
+  \centering
+  \includegraphics[scale=0.5]{figures/recording_schematics_2.png}
+  \caption{Structure of the recording scheme}
+\end{figure}
+To capture LR frames we used a CADDXFPV Ratel2 Analog Camera\cite{caddx}. As shown in Figure 1.1, the camera is connected to a 5.8Ghz video transmitter (vTX) that streams the signal to a receiver (vRX) on the ground, the receiver is connected the the natigation screen and also to the DVR (Digital Video Recorder) that saves the video stream on an SD card. While the camera itself can capture 1200TVL the colour encoding conversion standard in use is PAL\cite{pal} so accordingly to the standard, once recorded via DVR the rsolution of the video is 720*576 and the frame rate 25 frames per second.
+
+Another mayor difference between the two cameras is the field of view, respectively 120° for the Runcam and 165° for the Ratel2. This is due a a different combination of lens and sensor size, and results in two widely different video streams with a great amount of distortion, before running any kind of training both images must be rectified and the content of each frame must overlap with the one recorded and the other camera.The final results are shown side-by-side in Table \ref{tab:cam_table}.
+
+
+
+
+\begin{table}[h]
+\centering
+\caption{Resulting video streams}
+\label{tab:cam_table}
+\begin{tabular}{l|l|l|l|l|}
+  \cline{2-5}
+                                        & \cellcolor[HTML]{C0C0C0}Resolution {[}px{]} & \cellcolor[HTML]{C0C0C0}Aspect Ratio & \cellcolor[HTML]{C0C0C0}Frame rate {[}fps{]} & \cellcolor[HTML]{C0C0C0}Field of View {[}°{]} \\ \hline
+  \multicolumn{1}{|l|}{Runcam 2}        & 1920*1080                                   & 16:9                                 & 60                                           & 120                                           \\ \hline
+  \multicolumn{1}{|l|}{CADDXFPV Ratel2} & 720*576                                     & 4:3                                  & 25                                           & 165                                           \\ \hline
+  \end{tabular}
+\end{table}
+
+
+
+
+\section{Focal Length, Field of View and Distortion}
+\label{sec:distortion_fl}
+
+Focal length and Field of View are strongly related one to the other. The Field of View (FOV) describes the physical area of the world that can be imaged on a sensor through a determined lens system, when described in degrees it's referred to as Angular FOV or AFOV.
+The focal length of a lens is a fundamental parameter that describes how strongly it focuses or diverges light. A large focal length indicates that light is bent gradually while a short focal length indicates that the light is bent at sharp angles.
+The focal length of a lens defines the AFOV, for a given sensor size, the shorter the focal length, the wider the AFOV. Additionally, the shorter the focal length of the lens, the shorter the distance needed to obtain the same FOV compared to a longer focal length lens\cite{flength}.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[scale=0.5]{figures/AFOV.png}
+  \caption{For a given sensor size H a longer focal length produces a larger AFOV}
+\end{figure}
+
+The term distortion is often applied interchangeably with reduced image quality. However, distortion is an individual aberration that does not reduce the information in the image; most aberrations mix information together to create image blur, distortion simply misplaces information geometrically. This means that known distortion can be mapped or calculated and removed from an image, whereas information from other aberrations is lost and cannot easily be recreated.
+
+Distortion is determined by the optical design of the lens. Lenses with larger FOVs will exhibit greater amounts of distortion, larger FOVs (a result of low magnification or short focal length) are more susceptible to distortion than smaller FOVs (high magnification or long focal length). The wide FOVs achieved by short focal length lenses must be weighed against the aberrations introduced to the system (such as distortion)\cite{distortion}.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[scale=0.25]{figures/OG_sbs.png}
+  \caption{Unprocessed LR and HR frames captured in the same instant}
+  \label{img:og_sbs}
+\end{figure}
+
+As shown in Figure \ref{img:og_sbs} both images suffer from a great amount of distortion, it's expecially noticiable on the sides of the image. A solution to this problem is to calibrate both cameras and using the obtained information to reproject all the image points without the distortion.
+
+\subsection {Camera Calibration}
+\label{subsec:camera_calib}
+
+The library OpenCV\cite{opencv} offers a large set of powerful modules for image manipulation and computer vision, among all the others, its pinhole camera model has all the tools to efficiently perform calibration and rectification.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[scale=0.3]{figures/pinhole.png}
+  \caption{Illustration of the pinhole camera model}
+  \label{img:pinhole_img}
+\end{figure}
+
+The pinhole camera model describes the mathematical relationship between the coordinates of a point in three-dimensional space and its projection onto the image plane of an ideal pinhole camera, where the camera aperture is described as a point and no lenses are used to focus light\cite{wikipinhole}.
+The distortion-free projective transformation given by a pinhole camera model is shown below.
+
+\[s \; p = A \begin{bmatrix} R|t \end{bmatrix} P_w,\]
+
+Where \(P_w\) is a 3D point expressed with respect to the world coordinate system, \(p\) is a 2D pixel in the image plane, \(A\) is the camera intrinsic matrix, \(R\) and \(t\) are the rotation and translation that describe the change of coordinates from world to camera coordinate systems (or camera frame) and \(s\) is the projective transformation's arbitrary scaling and not part of the camera model\cite{opencvcalib}.
+
+The camera intrinsic matrix \(A\) (Figure \ref{fig:camera_matrix}) projects 3D points given in the camera coordinate system to 2D pixel coordinates, it's composed of the focal lengths fx and fy, which are expressed in pixel units, and the principal point (cx,cy), that is usually close to the image center\cite{opencvcalib}\cite{888718}.
+
+\begin{figure}[h]
+\caption{Intrinsic camera matrix}
+\label{fig:camera_matrix}
+\[A = \left (
+  \begin{array}{ c c c}
+  f_x & 0   & c_x \\
+   0  & f_y & c_y \\
+   0  & 0   & 1 \\
+  \end{array}
+\right )\]
+\end{figure}
+
+
+The intrinsic camera matrix is not the only set of parameters estimated during the calibration process. Real lenses introduce, to some degree, barrel distortion and also tangential distortion, to compensante for this a vector of distortion coefficents is estimated along the intrinsic camera matrix and subsequently used in all the applications of the model.\newline
+
+
+The estimation algorithm is based on \cite{888718} and \cite{matlab}, several pictures of a calibration pattern of known geometry are taken from different position, for each view of the pattern the algorithm computes the intrinsic parameters, after that the camera position in respect to the calibration pattern is estimated using solvePnP\cite{opencvsolvepnp}. The last step is to run the Levenberg-Marquardt optimization algorithm to minimize the reprojection error (sum of the square distances between the observed features on the calibration pattern and the estimated position of said feature reprojecting the 3D object point on the visual plane).
+
+Most of the time a chessboard pattern is enough to perform this kind of calibrate, however the OpenCV's findChessboardCorners !!!TODO function only detects the patters when the entire board is in frame, this means that the detection fails most of the times that the board moved to the corners of the screen, that is exactly where the distortion is more pronounced. For this reason a ChArUco board has been used insted.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[scale=0.15]{figures/charucoboard.png}
+  \caption{ChArUco board used for the calibration}
+  \label{img:ch_board}
+\end{figure}
+
+The ChArUco board (Figure \ref{ch_board}) incorporates a standard chessboard with a set of ArUco markers for detection, this allows the algorithm to detect the unique markers and from that it extrapolates the exact position of each pattern corner even if the board is only partially in frame. Each pattern corner is firsly refined for better accuracy, and after that all the detected corners are paired, as 2D coordinate, to the 3D points in the calibration pattern frame of reference.
+
+Quality of the board used for calibration is extremely important for proper parameter estimation, paper or plastic boards can introduce imperceptible deformations that can seriously tarnish the results of the process thus a flat tv screen has been used to run the calibration for both camera, ensuring a levelled plane and uniform illumination on the entire surface. Another reson to choose a big tv screen over a printed pattern is that the low resolution of the LR camera makes the detection of the ArUco markers difficult resulting in very close up close up videos with mediocre results.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[scale=0.7]{figures/not_all.png}
+  \caption{Frame taken during the calibration process. Shows how even if the pattern is only partially visible the corners are succesfully detected and labeleb with the correct ID}
+  \label{img:ch_calib}
+\end{figure}
+
+
+\section{Temporal Alignment}
+\label{sec:img_align}
+
+\section{Spatial Alignment}
+\label{sec:img_align}
+\subsection {Feature Matching}
+\label{subsec:feature_match}
+\subsection {Template Matching}
+\label{subsec:camera_calib}

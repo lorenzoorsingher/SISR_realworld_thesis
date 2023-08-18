@@ -1,17 +1,15 @@
-\chapter*{Sommario}
-\label{sommario}
+\chapter*{Summary}
+\label{summary}
 
-\addcontentsline{toc}{chapter}{Sommario}
+\addcontentsline{toc}{chapter}{Summary}
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sed nunc orci. Aliquam nec nisl vitae sapien pulvinar dictum quis non urna. Suspendisse at dui a erat aliquam vestibulum. Quisque ultrices pellentesque pellentesque. Pellentesque egestas quam sed blandit tempus. Sed congue nec risus posuere euismod. Maecenas ut lacus id mauris sagittis egestas a eu dui. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Pellentesque at ultrices tellus. Ut eu purus eget sem iaculis ultricies sed non lorem. Curabitur gravida dui eget ex vestibulum venenatis. Phasellus gravida tellus velit, non eleifend justo lobortis eget.
+Cameras have become one of the most present kinds of technology in our everyday lives, they can be found in our smartphones, cars, doorbells, and a plethora of other appliances. For many use cases, high-end cameras are not employed and the reasons that can vary from space constraints to budget to bitrate limits. For example pplications such as security cameras oftentimes do not use high-resolution sensors and that can result in poor footage that lacks clarity and details. An increasingly used method to try and solve this problem is to enhance the image quality in post-processing using reconstruction techniques such as Super Resolution.
 
-  Sommario è un breve riassunto del lavoro svolto dove si descrive l'obiettivo, l'oggetto della tesi, le
-metodologie e le tecniche usate, i dati elaborati e la spiegazione delle conclusioni alle quali siete arrivati.
+The objective of Single-Image Super Resolution (SISR) is to recreate high-resolution (HR) images from their low-resolution (LR) equivalent.
+Deep convolutional networks have become a powerful tool for this kind of task, their ability to accurately recreate high-resolution details comes from training a rather large pool of example images.
+Most existing methods generate their paired training set by artificially synthesizing LR directly from HR images. However, this dataset preparation strategy harms the application of these networks in real-world scenarios due to the inherent domain gap between the training and testing data \cite{9711325}.
+This becomes very evident when the degradation of the LR images doesn't come from the common techniques used in the systemization of training datasets such as bicubic downsampling or JPEG compression but insted from other sources such as noise due to analog signal, and this is where I will focus.
 
-Il sommario dell'elaborato consiste al massimo di 3 pagine e deve contenere le seguenti informazioni:
-\begin{itemize}
-  \item contesto e motivazioni
-  \item breve riassunto del problema affrontato
-  \item tecniche utilizzate e/o sviluppate
-  \item risultati raggiunti, sottolineando il contributo personale del laureando/a
-\end{itemize}
+Remotely controlled aerial vehicles can be difficult to maneuver at a distance from the ground and for this reason they often require a camera, transmitting a live video feed to a ground station for navigation. While for slow moving aerial platforms a digital connection might be enough, as speed and distance increase the latency introduced by the conversion of the video signal to digital can become a serious problem, for this reason many FPV (First-Person View) drones still equip low-resolution, low-latency analog cameras connected to a video transmitter (vTX) that streams directly to a video receiver (vRX) on the ground with a very small latency in the order of ten milliseconds \cite{oscar}. This video stream, albeit good for navigation, lacks quality and suffers from heavy noise, for this reason these kind of drones usually mount an high resolution camera to capture the scenery. A second camera brings many downsides: reduced maneuverability, increased weight with a big impact on battery life and additional costs.
+
+Both cameras are fixed and point to the same direction, this presents the unique possibilty to record syncronized low-quality and high-quality videos, perfect for the creation of a specific dataset of paired LR and HR images. What's left is to choose a SISR model and finetune on our newely extracted data. For this project I choose to compare the prformance of four different models among the best currently performing algorithms, according to paperswithcode \cite{pwcode}: ESRGAN\cite{wang2018esrgan}, Real-ESRGAN\cite{wang2021realesrgan}, SwinIR\cite{liang2021swinir} and HAT-L\cite{chen2023activating}.
