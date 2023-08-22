@@ -14,6 +14,13 @@ Focal length and Field of View are strongly related one to the other. The Field 
 The focal length of a lens is a fundamental parameter that describes how strongly it focuses or diverges light. A large focal length indicates that light is bent gradually while a short focal length indicates that the light is bent at sharp angles.
 The focal length of a lens defines the AFOV, for a given sensor size, the shorter the focal length, the wider the AFOV. Additionally, the shorter the focal length of the lens, the shorter the distance needed to obtain the same FOV compared to a longer focal length lens\cite{flength}.
 
+% \begin{wrapfigure}{l}{0.5\textwidth}
+%   \begin{center}
+%     \includegraphics[width=0.48\textwidth]{figures/AFOV.png}
+%   \end{center}
+%   \caption{For a given sensor size H a longer focal length produces a larger AFOV}
+% \end{wrapfigure}
+
 \begin{figure}[h]
   \centering
   \includegraphics[scale=0.5]{figures/AFOV.png}
@@ -40,7 +47,7 @@ Another notable problem encountered during the dataset processing is temporal al
 
 \begin{figure}[h]
   \centering
-  \includegraphics[scale=0.5]{figures/temporal_align.png}
+  \includegraphics[scale=0.22]{figures/temporal_align_3.png}
   \caption{How frames are captured over the span of 1/4 of a second}
   \label{img:temp_align}
 \end{figure}
@@ -190,11 +197,48 @@ Figure \ref{fig:calib_stats_LR} and Figure \ref{fig:calib_stats_HR} show how, fo
 
 A second factor to take into consideration is the distrubution of errors, RMS reprojection error only gives information about the averaged distance between detected and reprojected points without taking into account their direction. Figures \ref{fig:reprj_dist_LR} and \ref{fig:reprj_dist_HR} show how for each combination of threshold and number of samples the reprojected points differ from their detected position on the two axis, a good calibration will show a cloud of datapoints distrubuted uniformally aroud the origin, if the spread it skewed in one direction that might be the symptom of a poor estimation or bad measurements. It's worth mentioning that this kind of off-center patterns are not evident from the RMS error reading alone so it's good practice to run a specific check for these particular occurences.
 
+The final calibrations used for this dataset had RMS reprojection errors of, respectively, 0.67px for the low resolution camera and 0.98px for the high resolution camera. Once obtained the intrinsic camera matrix and the distortion coefficents vector it is enough to pass them and the distorted image as parameters to OpenCV's undistort \#TODO function to get the rectified results.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[scale=0.4]{figures/bef_aft_rect.png}
+  \caption{The same image before and after the rectification.}
+  \label{img:rectify_sbs}
+\end{figure}
+
+Figure \ref{img:rectify_sbs} shows side by side the rectification result, a grid overlay has been added to highlight how the image gets distorted in the process. It's easy to see how part of the original image is lost due to the fact that while all the pixel are geometrically transformed to their new position, the image shape is kept the same. Now that the distortion is removed it's possible to move to the next step where LR and HR pairs are aligned.
+
 \section{Temporal Alignment}
 \label{sec:temp_align}
 
+The temporal alignment process is rather simple: find a pair of frames taken at the same instant and use them as frame of reference to navigate syncronized through the videos.
+
+The two cameras are not wired one to the other so while it's not possible to get perfect syncronization it's feasable to extrapolate a good enough approximation that can be refined furtherly processing the images. The first step is to find a two frames that are as close as possible, to achieve this in the first few seconds of every clip an external timer is recorded by both cameras, afterwards, in post processing both clips are shown side by side and, manually, a pair of frames is chosen as reference and the frame indexes are saved in the corresponding clips folder.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[scale=0.4]{figures/time_sync.png}
+  \caption{Videos are shown side by side and it's possible to move indipendently frame by frame until a correspondence is found.}
+  \label{img:time_sync}
+\end{figure}
+
+Once the reference point is found it's clear from Figure \ref{img:temp_align} that's just not possible to move frame by frame and expect the video to stay syncronized, moreover only one every few frames will align like the reference pair. In this specific case, the framerates being 25 for the low resolution and 60 for the high resolution implies that one pair every 5 LR frames and 12 HR frames will have the same alignment thus it's been decided to keep one frame every 200ms. While it might seem like a waste it actually solves the problem of having too many similar frames with redundant information.
+
+It should be empathized that since the cameras are not physically syncronized and the shutter speeds are different it's not possible to get perfect matches, the next steps try to tackle this problem with some image manipulation in post processing.
+
 \section{Spatial Alignment}
 \label{sec:spatial_align}
+
+The two cameras have widely different AFOVs, so it's clear that the images, as they come out of the rectification and syncronization, frame two much different sections of the world, on top of that, even if the cameras are fixed in place and point to the same direction it can't be taken for granted that the mounting positions are aligned to the degree of precision needed to create a practical dataset.
+
+The first step of the spatial alignment is geometrically trasform one of the two images so that the content of both overlaps, this is done manually, it's important to do it separately for each pair of clips: landing, moving the drone around, removing and inserting the SD cards in the camera, all the mentioned action can cause small movements of the camera that render any alignment done beforhand, useless.
+
+
+
+As mentioned in the introduction both cameras are fixed in place and point to the same direction, but despite that the aerial platform is not devoid of a big amount of vibrations caused by turbolences and by the four motors spinning at tens of thousands of rounds per minute.
+This causes small, almost imperceptible, movements in the cameras that come apparent only in post production, this, in addition to the inevitably small descrepancies in the syncronization of frames, calls for an alignment solution based solely on the content of the image pairs. Two solutions have been implemented to solve this issue, they offer their pros and cons and both can be used interchangeably and combined together.
+
+
 \subsection {Feature Matching}
 \label{subsec:feature_match}
 \subsection {Template Matching}
