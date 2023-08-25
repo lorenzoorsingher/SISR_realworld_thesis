@@ -166,7 +166,7 @@ A larger amount of images does not necessarily mean a better result and also the
   \end{subfigure}%
   \begin{subfigure}{.5\textwidth}
     \centering
-    \includegraphics[width=1\linewidth]{figures/calib_results_table_LR.png}
+    \includegraphics[width=0.8\linewidth]{figures/calib_results_table_LR.png}
     \caption{RMS reprojection error averaged over 20 calibrations and standard deviation w.r.t. number of samples and threshold.}
     \label{fig:calib_stats_LR}
   \end{subfigure}
@@ -184,7 +184,7 @@ A larger amount of images does not necessarily mean a better result and also the
   \end{subfigure}%
   \begin{subfigure}{.5\textwidth}
     \centering
-    \includegraphics[width=1\linewidth]{figures/calib_results_table_HR.png}
+    \includegraphics[width=0.8\linewidth]{figures/calib_results_table_HR.png}
     \caption{RMS reprojection error averaged over 20 calibrations and standard deviation w.r.t. number of samples and threshold.}
     \label{fig:calib_stats_HR}
   \end{subfigure}
@@ -285,3 +285,64 @@ On top of that results are not as consistent as hoped, while most of the frames 
 
 \subsection {Template Matching}
 \label{subsec:template_match}
+
+Automatically verifying the quality of the alignment is not an easy task as if there was a metric to unequivocally define how precisely the two images match, that would be surely used in the alignment process itself. One could think to use template matching and although the absolute value of the match doesn't say much when the images are so intrinsecally different, it can effectively rank how close a set of frames low-resolution frames is compared to an high-resolution one.
+
+This is the idea behind the second approach to spatial alignment. As mentioned before the non-perfect syncronization of frames (which is impossible if the two triggers are not communicating or if one camera is shooting at a much higher framerate than the other) is a big factor when considering moving object which, in this project, is the case but it can also be used to our advantage. The small offsets introduced by the camera movement over adjacent frames on a small window of time can actually compensate the misalignments due to other factors.
+
+For this approach instead of considering a single HR frame, every LR image is associated with a buffer of 5 high-resolution adjacent frames centered around the syncronized one and OpenCV's implementation of the \emph{matchTemplate} function is used to pick the one that closely overlaps the the low-resolution image. Additionally \emph{matchTemplate} doesn't fare well with rotated targets, which is exactly what we are looking for as eventually a constrained version of the feature matching approach can be used to translate to the right position frames that match in orientation but not one the \(x\) and \(y\) axis.\newline
+
+The function \emph{matchTemplate} by moving the template around the image and giving for each position a score of similarity to the image, for this reason the template has to be smaller than the image and the size of the result will correspond to the room of movement of the top left pixel of the template, so it will be similar to a heatmap with the size of the difference of widths by the difference of heights.
+
+For this reason the templates, that are the HR frames, have to be cropped, and the crop will correspond to their wiggle room around the LR frame. Each cropped frame is run with the LR one in the \emph{matchTemplate} function and the pixel with the highest score is saved along its coordinates. Finally the pixel with the highest score over the entire buffer is used to pick the frame the more closely matches the low-resolution one.
+
+Ideally, if calibration, syncronization and alignment were perfect, when visualizing together the coordinates of the best pixel for each frame it would show a pattern corresponding to the movement of the camera and the best pick (the pixel with the highest score overall) should lay in the center, but obviously that's not always the case.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[scale=1.5]{figures/matchtemplate.png}
+  \caption{Two different sequences of frames. On the bottom the buffer of 5 HR frames followed by the LR one. On the top the visualization of the coordinates of the best match for each frame, in red is highlighted the position of the frame below, in green is the highlighted the pixel that scored the highest overall.}
+  \label{img:matchtempl}
+\end{figure}
+
+In Figure \ref{img:matchtempl} it's very clear the movement of HR recording compared to the fixed LR frame. It's easy to see how the relative movement present in the buffer frames at the bottom is much faster than the one above as the points are more spread out. It's worth noting that the HR templates from size 1920px*1080px were cropped by 50 frames on all sides, giving a squared wiggle room of side length 101px, also the frame buffer of size 5 corresponds to about 8 milliseconds.
+
+While, as mentioned before, it's possible to furtherly refine the alignment by running the feature matching on top of the match template procedure it's been decided to ditch this extra step as the improvements to the dataset precision were marginal at the cost of increasing the computation time by an order of magnitude.
+
+\section{Final dataset result}
+\label{sec:final_dataset}
+
+Once the spatial alignment is done the images are finally ready to be resized for the actual dataset. As an intermediate step every frame is, firstly cropped as a square and then resized to 1024 before being written to disk. The trainings were run with different images sizes, all smaller than 1024*1024, by storing them like this a lot of time is saved when creating different shaped dataset as the whole alignment doesn't need to be run again and the additional whole read, resize and write produre takes just seconds even with thousands of images.
+
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[scale=0.4]{figures/final_64_256.png}
+  \caption{Samples from the 64 to 256 dataset.}
+  \label{img:64_256}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[scale=0.4]{figures/final_64_256_patches.png}
+  \caption{Samples from the 64 to 256 patches dataset.}
+  \label{img:64_256_p}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[scale=0.4]{figures/final_128_512.png}
+  \caption{Samples from the 128 to 512 dataset.}
+  \label{img:128_512}
+\end{figure}
+
+
+Although all the models were trained at x4 scale, to test the behaviour of the networks with differenly shaped datasets it's been chosen to use the following configurations:
+
+\begin{itemize}
+  \item 64*64 LR and 256*256 HR (Figure \ref{img:64_256})
+  \item 64*64 LR and 256*256 HR patches splitting each frame in 4 squares (Figure \ref{img:64_256_p})
+  \item 128*128 LR and 512*512 HR (Figure \ref{img:128_512})
+\end{itemize}
+
+The size of the datasets are 2210 training and 249 validation for the full size one and 8652 taining 624 validation for the patches set. Due to memory constraints it's not been possible to train every model with the 128 to 512 dataset.
