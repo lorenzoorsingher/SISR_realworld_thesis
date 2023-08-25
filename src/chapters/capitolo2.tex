@@ -233,13 +233,55 @@ The two cameras have widely different AFOVs, so it's clear that the images, as t
 
 The first step of the spatial alignment is geometrically trasform one of the two images so that the content of both overlaps, this is done manually, it's important to do it separately for each pair of clips: landing, moving the drone around, removing and inserting the SD cards in the camera, all the mentioned action can cause small movements of the camera that render any alignment done beforhand, useless.
 
+\begin{figure}[H]
+  \centering
+  \includegraphics[scale=1.5]{figures/HR_on_LR_M_err_highlight.png}
+  \caption{Sharp turns and sudden movements make the small misalignments more evident. Here the HR frame is overlapped to the LR one to fit the same world area using only the manual alignment.}
+  \label{img:align_err}
+\end{figure}
 
-
-As mentioned in the introduction both cameras are fixed in place and point to the same direction, but despite that the aerial platform is not devoid of a big amount of vibrations caused by turbolences and by the four motors spinning at tens of thousands of rounds per minute.
-This causes small, almost imperceptible, movements in the cameras that come apparent only in post production, this, in addition to the inevitably small descrepancies in the syncronization of frames, calls for an alignment solution based solely on the content of the image pairs. Two solutions have been implemented to solve this issue, they offer their pros and cons and both can be used interchangeably and combined together.
+As mentioned in the introduction both cameras are fixed in place and point to the same direction, despite that the aerial platform is not devoid of a copious amount of vibrations caused by turbolences and by the four motors spinning at tens of thousands of rounds per minute.
+This causes small, almost imperceptible, movements in the cameras that only come apparent in post production as shown in figure \ref{img:align_err}, this, in addition to the inevitably small descrepancies in the syncronization of frames, calls for an alignment solution based solely on the content of the single image pairs. Two solutions have been implemented to solve this issue, they offer their pros and cons and both can be used interchangeably or combined together.
 
 
 \subsection {Feature Matching}
 \label{subsec:feature_match}
+
+Feature matching refers to the act of recognizing features of the same object across images with slightly different viewpoints\cite{feat_match}. If enough keypoints are correcly detected and paird between the two frames it's possible to use a procedure similar to the initial alignment and automatically refine the position of the low resolution image with regards to high resolution one.
+
+Three techniques have been chosen and tested on the dataset directly using their OpenCV implementation with some small changes to their criteria\cite{6126544}\cite{lowe1999object}\cite{6809191}\cite{DBLP:journals/corr/abs-1710-02726}:
+
+\begin{itemize}
+  \item \textbf{ORB}\newline
+  The ORB (Oriented FAST and Rotated BRIEF) algorithm is a sophisticated integration of the FAST keypoint detection and BRIEF descriptor techniques, bolstered by strategic modifications for heightened performance. ORB begins by employing the FAST algorithm to detect keypoints, followed by applying the Harris corner measure to select the most significant keypoints from this set. Notably, FAST lacks orientation determination and is sensitive to rotation; however, ORB addresses this by utilizing the computed centroid of the patch surrounding a corner, its orientation determined by the vector from corner to centroid, supplemented by moment calculations for improved rotation invariance. In dealing with the limitation of BRIEF descriptors under in-plane rotations, ORB computes a rotation matrix based on patch orientation before adapting the descriptors accordingly. This intricate alignment refines the descriptors' performance, resulting in an algorithm that excels in various computer vision tasks by harmonizing FAST-based keypoints and orientation-aware BRIEF descriptors.
+  \item \textbf{SIFT}\newline
+  Lowe's Scale-Invariant Feature Transform (SIFT) presents a comprehensive solution to challenges such as image rotation, affine transformations, intensity variations, and changes in viewpoint during feature matching. The SIFT algorithm is structured around four fundamental steps. Firstly, it estimates scale space extrema by employing the Difference of Gaussian (DoG) approach. Subsequently, it engages in key point localization, identifying and refining potential key point candidates while eliminating low-contrast points. Thirdly, a key point's orientation is determined by leveraging local image gradients. Lastly, the algorithm generates descriptors for each key point by computing local image descriptors based on gradients' magnitude and orientation, encapsulating essential information for subsequent matching processes.
+  \item \textbf{SIFT with FLANN based matcher}\newline
+  FLANN (Fast Library for Approximate Nearest Neighbors) stands as a versatile tool designed to facilitate rapid and approximate searches for nearest neighbors within spaces characterized by high dimensionality. Within its framework, a set of algorithms has been curated, meticulously selected for their performance in nearest neighbor searches. Moreover, FLANN boasts an integrated mechanism for dynamically selecting the most fitting algorithm and optimal parameters, adapting to the specific dataset at hand and ensuring efficient and effective neighbor searches.
+\end{itemize}
+
+Working with automated feature matching poses the risk of detecting false positives that negatively affect the resulting transformation. OpenCV's \emph{findHomography} solves this problem using RANSAC to find end exclude outliers while estimating the affine transform, nevertheless it was key to refine as much as possible the feature match trading off datapoints for cleaner and more precise measurements.
+Testing revealed that on this task SIFT performed much better compared to ORB, the addition of a FLANN matcher furtherly improved the precision of the algorithm ensuing in decent, albeit not perfect, results (Figure \ref{img:deep_match}).
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[scale=0.2]{figures/ORB.png}
+  \includegraphics[scale=0.2]{figures/SIFT.png}
+  \includegraphics[scale=0.2]{figures/FLANN.png}
+  \caption{In order, ORB, SIFT, SIFT with FLANN. While keeping the same constraints for all three approaches, using SIFT with FLANN matcher resulted in many more and much more consistent datapoints.}
+  \label{img:orb_sift}
+\end{figure}
+
+Some of the additional criteria include making sure that the keypoint's coordinates don't differ for more than a certain threshold (set between 5 and 20 pixels) between the two images and that keypoint are distrubuted uniformally on the image for better estimation of the affine transform matrix, otherwise the frames are discarded. Needless to say running this whole procedure of, feature detection, feature matching, matrix estimation and perspective warp is a computationally expensive operation, taking several minutes for every batch of few hundreds images.
+
+On top of that results are not as consistent as hoped, while most of the frames get correcly aligned, in some cases the estimation goes completely off rails resulting in severly warped frames scattered in the dataset. Although it's possible to just skim through the dataset and manually remove the affected images this is not a scalable solution when dealing with thousands of images.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[scale=1.2]{figures/deep_match_sbs.png}
+  \caption{The light blue rectangle represents how the HR frame fits in the LR frame using the standard clip alignment, the green rectangle is the fit of the HR image once the refined alignment procedure is run on this specific pair of frames. On the right is the final result. It must be noted that this image is just for reference, in the actual script the HR frame is left untouched to preserve its image quality, while the LR one endures all the warping and scaling.}
+  \label{img:deep_match}
+\end{figure}
+
 \subsection {Template Matching}
 \label{subsec:template_match}
