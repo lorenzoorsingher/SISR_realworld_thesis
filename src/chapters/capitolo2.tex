@@ -25,7 +25,7 @@ The focal length of a lens defines the AFOV, for a given sensor size, the shorte
   \centering
   \includegraphics[scale=0.5]{figures/AFOV.png}
   \caption{For a given sensor size H a longer focal length produces a larger AFOV}
-\end{figure}
+\end{figure}50 555
 
 The term distortion is often applied interchangeably with reduced image quality. However, distortion is an individual aberration that does not reduce the information in the image; most aberrations mix information together to create image blur, distortion simply misplaces information geometrically. This means that known distortion can be mapped or calculated and removed from an image, whereas information from other aberrations is lost and cannot easily be recreated.
 
@@ -58,13 +58,13 @@ How there three problems have been tackled will be discussed in greater detail i
 \section{Cameras}
 \label{sec:cameras}
 
-HR frames have been captured using a Runcam 2\cite{runcam}, the digital camera offers to record at 1920*1440@30, 1080p@60 and 720p@120. To compromise between resolution and frame rate all the HR clips have been recorded in FullHD 1920*1080 at 60 frames per second, although the camera is capable of capuring higher resolution images a lower frame rate would have made difficult to syncronize LR and HR frames resulting in a much lower amount of valid matches.
+HR frames have been captured using a Runcam 2\cite{runcam}, the digital camera offers to record at \(1920\times1440\)@30, 1080p@60 and 720p@120. To compromise between resolution and frame rate all the HR clips have been recorded in FullHD  \(1920\times1080\) at 60 frames per second, although the camera is capable of capuring higher resolution images a lower frame rate would have made difficult to syncronize LR and HR frames resulting in a much lower amount of valid matches.
 \begin{figure}[h]
   \centering
   \includegraphics[scale=0.5]{figures/recording_schematics_2.png}
   \caption{Structure of the recording scheme}
 \end{figure}
-To capture LR frames we used a CADDXFPV Ratel2 Analog Camera\cite{caddx}. As shown in Figure 1.1, the camera is connected to a 5.8Ghz video transmitter (vTX) that streams the signal to a receiver (vRX) on the ground, the receiver is connected the the natigation screen and also to the DVR (Digital Video Recorder) that saves the video stream on an SD card. While the camera itself can capture 1200TVL the colour encoding conversion standard in use is PAL\cite{pal} so accordingly to the standard, once recorded via DVR the rsolution of the video is 720*576 and the frame rate 25 frames per second.
+To capture LR frames we used a CADDXFPV Ratel2 Analog Camera\cite{caddx}. As shown in Figure 1.1, the camera is connected to a 5.8Ghz video transmitter (vTX) that streams the signal to a receiver (vRX) on the ground, the receiver is connected the the natigation screen and also to the DVR (Digital Video Recorder) that saves the video stream on an SD card. While the camera itself can capture 1200TVL the colour encoding conversion standard in use is PAL\cite{pal} so accordingly to the standard, once recorded via DVR the rsolution of the video is  \(720\times576\) and the frame rate 25 frames per second.
 
 Another mayor difference between the two cameras is the field of view, respectively 120° for the Runcam and 165° for the Ratel2. This is due a a different combination of lens and sensor size, and results in two widely different video streams with a great amount of distortion, before running any kind of training both images must be rectified and the content of each frame must overlap with the one recorded and the other camera.The final results are shown side-by-side in Table \ref{tab:cam_table}.
 
@@ -80,8 +80,8 @@ Another mayor difference between the two cameras is the field of view, respectiv
 \begin{tabular}{l|l|l|l|l|}
   \cline{2-5}
                                         & \cellcolor[HTML]{C0C0C0}Resolution {[}px{]} & \cellcolor[HTML]{C0C0C0}Aspect Ratio & \cellcolor[HTML]{C0C0C0}Frame rate {[}fps{]} & \cellcolor[HTML]{C0C0C0}Field of View {[}°{]} \\ \hline
-  \multicolumn{1}{|l|}{Runcam 2}        & 1920*1080                                   & 16:9                                 & 60                                           & 120                                           \\ \hline
-  \multicolumn{1}{|l|}{CADDXFPV Ratel2} & 720*576                                     & 4:3                                  & 25                                           & 165                                           \\ \hline
+  \multicolumn{1}{|l|}{Runcam 2}        &  \(1920\times1080\)                                   & 16:9                                 & 60                                           & 120                                           \\ \hline
+  \multicolumn{1}{|l|}{CADDXFPV Ratel2} &  \(720\times576\)                                     & 4:3                                  & 25                                           & 165                                           \\ \hline
   \end{tabular}
 \end{table}
 
@@ -305,14 +305,14 @@ Ideally, if calibration, syncronization and alignment were perfect, when visuali
   \label{img:matchtempl}
 \end{figure}
 
-In Figure \ref{img:matchtempl} it's very clear the movement of HR recording compared to the fixed LR frame. It's easy to see how the relative movement present in the buffer frames at the bottom is much faster than the one above as the points are more spread out. It's worth noting that the HR templates from size 1920px*1080px were cropped by 50 frames on all sides, giving a squared wiggle room of side length 101px, also the frame buffer of size 5 corresponds to about 8 milliseconds.
+In Figure \ref{img:matchtempl} it's very clear the movement of HR recording compared to the fixed LR frame. It's easy to see how the relative movement present in the buffer frames at the bottom is much faster than the one above as the points are more spread out. It's worth noting that the HR templates from size 1920px*1080px were cropped by 50 pixels on all sides, giving a squared wiggle room of side length 101px, also the frame buffer of size 5 corresponds to about 8 milliseconds.
 
 While, as mentioned before, it's possible to furtherly refine the alignment by running the feature matching on top of the match template procedure it's been decided to ditch this extra step as the improvements to the dataset precision were marginal at the cost of increasing the computation time by an order of magnitude.
 
 \section{Final dataset result}
 \label{sec:final_dataset}
 
-Once the spatial alignment is done the images are finally ready to be resized for the actual dataset. As an intermediate step every frame is, firstly cropped as a square and then resized to 1024 before being written to disk. The trainings were run with different images sizes, all smaller than 1024*1024, by storing them like this a lot of time is saved when creating different shaped dataset as the whole alignment doesn't need to be run again and the additional whole read, resize and write produre takes just seconds even with thousands of images.
+Once the spatial alignment is done the images are finally ready to be resized for the actual dataset. As an intermediate step every frame is, firstly cropped as a square and then resized to 1024 before being written to disk. The trainings were run with different images sizes, all smaller than  \(1024\times1024\), by storing them like this a lot of time is saved when creating different shaped dataset as the whole alignment doesn't need to be run again and the additional whole read, resize and write produre takes just seconds even with thousands of images.
 
 
 \begin{figure}[H]
@@ -340,9 +340,9 @@ Once the spatial alignment is done the images are finally ready to be resized fo
 Although all the models were trained at x4 scale, to test the behaviour of the networks with differenly shaped datasets it's been chosen to use the following configurations:
 
 \begin{itemize}
-  \item 64*64 LR and 256*256 HR (Figure \ref{img:64_256})
-  \item 64*64 LR and 256*256 HR patches splitting each frame in 4 squares (Figure \ref{img:64_256_p})
-  \item 128*128 LR and 512*512 HR (Figure \ref{img:128_512})
+  \item  \(64\times64\) LR and  \(256\times256\) HR (Figure \ref{img:64_256})
+  \item  \(64\times64\) LR and  \(256\times256\) HR patches splitting each frame in 4 squares (Figure \ref{img:64_256_p})
+  \item  \(128\times128\) LR and  \(512\times512\) HR (Figure \ref{img:128_512})
 \end{itemize}
 
 The size of the datasets are 2210 training and 249 validation for the full size one and 8652 taining 624 validation for the patches set. Due to memory constraints it's not been possible to train every model with the 128 to 512 dataset.
