@@ -1,14 +1,11 @@
-\chapter{Models and Training}
-\label{cha:models_training}
+\chapter{Models}
+\label{cha:models}
 
 Single-Image Super Resolution refers to the process of enhancing the size of small images while striving to minimize the reduction in quality or the loss of detail. Alternatively, it involves the task of reconstructing High Resolution (HR) images by utilizing the abundant information present in Low Resolution (LR) images, which lack finer details.
 
 In other words, Image Super Resolution is about taking images that are of lower quality or resolution and applying techniques to enlarge them without significantly sacrificing their overall quality. This can be particularly useful in scenarios where higher resolution images are required for tasks like printing, display on high-resolution screens, or analyzing intricate details in images. The goal is to generate visually appealing results that closely resemble the appearance of true high-resolution images or at least contain improved details compared to the original low-resolution versions.
 
 Neural networks are the perfect tool for this kind of task, from a set of images they are capable of capturing a lot of low-level image statistics and creating powerful high-order models able to deal with a very large degradation space.
-
-\section{Models}
-\label{sec:models}
 
 The models have been chosen taking into account different characteristics. ESRGAN and Real-ESRGAN are two of the most popular model when it comes to Super Resolution, they share a similar structure and both use a GAN (Generative Adversal Network) architecture, on the other hand HAT-L and SwinIR are transformer-based models that take a new approach to vision tasks.
 
@@ -17,7 +14,7 @@ All models score highly in the ranking proposed by paperswithcode\cite{pwcode}, 
 The four models are implemented in the PyTorch-based open-source image and video restoration toolbox BasicSR (Basic Super Restoration). On top of offering the various models for SR it's equipped with useful logging capabilities and metrics for evaluation.
 
 
-\subsection{ESRGAN}
+\section{ESRGAN}
 \label{subsec:esrgan}
 
 ESRGAN is based on the SRGAN\cite{ledig2017photorealistic} model. SRGAN, is a generative adversarial network (GAN) for image super-resolution (SR). The SRGAN model uses a perceptual loss function that consists of an adversarial loss and a content loss. The adversarial loss pushes the solution to the natural image manifold using a discriminator network that is trained to differentiate between the super-resolved images and original photo-realistic images. In addition, the authors use a content loss motivated by perceptual similarity instead of similarity in pixel space. The actual networks consist mainly of residual blocks for feature extraction. The perceptual loss function is written as a weighted sum of a VGG content loss and an adversarial loss component. SRGAN is capable of inferring photo-realistic natural images for 4x upscaling factors and is the first framework to achieve this.
@@ -40,7 +37,7 @@ connections as depicted in Figure \ref{img:RRDB}
 \end{figure}
 
 
-\subsection{Real-ESRGAN}
+\section{Real-ESRGAN}
 \label{subsec:realesrgan}
 
 Real-world degradations are usually too complex to be modeled with a simple combination of multiple degradations. Thus, models that assume an ideal bicubic
@@ -56,7 +53,7 @@ it employs a U-Net discriminator with spectral normalization to increase discrim
 
 The authors claim that comparisons have shown its superior visual performance than prior works on various real datasets. While in this project the improved degradation model won't help much since our dataset already contains real-world degradations, the improved discriminator and better pratrained weights might yield better results compared to the previous methods.
 
-\subsection{SwinIR}
+\section{SwinIR}
 \label{subsec:swinir}
 
 CNN-based methods generally suffer from two basic
@@ -72,13 +69,13 @@ Transformer. SwinIR\cite{liang2021swinir} is a Swin Transformer based model that
   \label{img:swinir}
 \end{figure}
 
-\subsection{HAT-L}
+\section{HAT-L}
 \label{subsec:hatl}
 
 HAT-L expands on the idea of Transformer-based methods for low-level vision tasks, such as image Super Resolution. The authurs propose a novel Hybrid Attention Transformer (HAT). It combines both channel attention and window based self-attention schemes \#TODO expand
 
-\section{Training}
-\label{sec:Training}
+\chapter{Training}
+\label{cha:Training}
 
 Most of the training has been done using Google Colab Pro on 16GB NVIDIA T4 and NVIDIA V100 GPUs. Due to memory constraints all models have been trained on the 64 to 256 dataset while only for some it's been possible to use the 128 to 512 dataset.
 All training were run on pre-trained weights, fine-tuning the model until no improvements could be observed on loss and metrics.
@@ -90,8 +87,8 @@ All training were run on pre-trained weights, fine-tuning the model until no imp
   \item HAT-L proved to be the heaviest of the models. It needed on average 15GB of VRAM just to run the smaller 64 to 256 dataset on a batch size of 2, for this reason it wasn't possible to try the larger 128 to 512 dataset. The pretrained weights provided with the model are trained with ImageNet\cite{deng2009imagenet}.
 \end{itemize}
 
-\subsection{Metrics}
-\label{subsec:metrics}
+\section{Metrics}
+\label{sec:metrics}
 
 To evaluate the models performance we used the metrics provided and implemented directly by BasicSR:
 \#TODO LPIPS metric?
@@ -132,8 +129,47 @@ To evaluate the models performance we used the metrics provided and implemented 
 
 A higher PSNR and SSIM value indicates better image quality, as it signifies a smaller amount of distortion between the original and the processed image. However, it's important to note that while PSNR and SSIM are widely used metrics, it does not always correlate perfectly with human perception of image quality. In some cases, images with higher values might still appear perceptually worse to human observers due to the limitations of the metric in capturing certain types of image distortions that humans are sensitive to.
 
-\subsection{Training results}
-\label{subsec:metrics}
+\section{Training results}
+\label{sec:training_res}
+
+\subsection{ESRGAN}
+\label{subsec:training_esrgan}
+
+\begin{figure}[H]
+  \centering
+  \begin{subfigure}{.5\textwidth}
+    \centering
+    \includegraphics[width=1\linewidth]{figures/ESRGAN_psnr.png}
+    \label{fig:esrgan_psnr}
+  \end{subfigure}%
+  \begin{subfigure}{.5\textwidth}
+    \centering
+    \includegraphics[width=1\linewidth]{figures/ESRGAN_ssim.png}
+    \label{fig:esrgan_ssim}
+  \end{subfigure}
+  \caption{PSNR and SSIM for Real-ESRGAN}
+  \label{fig:esrgan_metrics}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \begin{subfigure}{.5\textwidth}
+    \centering
+    \includegraphics[width=1\linewidth]{figures/ESRGAN_ganloss.png}
+    \label{fig:realesrgan_psnr}
+  \end{subfigure}%
+  \begin{subfigure}{.5\textwidth}
+    \centering
+    \includegraphics[width=1\linewidth]{figures/ESRGAN_perceptual.png}
+    \label{fig:realesrgan_ssim}
+  \end{subfigure}
+  \caption{GAN loss and perceptual loss for Real-ESRGAN}
+  \label{fig:realesrgan_losses}
+\end{figure}
+
+\subsection{Real-ESRGAN}
+\label{subsec:training_realesrgan}
+
 \begin{figure}[H]
   \centering
   \begin{subfigure}{.5\textwidth}
@@ -168,6 +204,33 @@ A higher PSNR and SSIM value indicates better image quality, as it signifies a s
 
 For Real-ESRGAN, even though the training for the smaller datasets was run to over 15k iterations for better visualization comparison it's been decided to cap Figure \ref{fig:realesrgan_metrics} at 6k iterations as, beyond that point, the model showed signs of overfit, with PSNR plateauing and SSIM decreasing substantially.
 
+\subsection{SwinIR}
+\label{subsec:training_swinir}
+\begin{figure}[H]
+  \centering
+  \begin{subfigure}{.5\textwidth}
+    \centering
+    \includegraphics[width=1\linewidth]{figures/swinir_psnr.png}
+    \label{fig:swinir_psnr}
+  \end{subfigure}%
+  \begin{subfigure}{.5\textwidth}
+    \centering
+    \includegraphics[width=1\linewidth]{figures/swinir_ssim.png}
+    \label{fig:swinir_ssim}
+  \end{subfigure}
+  \caption{PSNR and SSIM for HAT-L}
+  \label{fig:swinir_metrics}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[scale=0.14]{figures/swinir_loss.png}
+  \caption{Loss for HAT-L}
+  \label{img:swinir_loss}
+\end{figure}
+
+\subsection{HAT-L}
+\label{subsec:training_hatl}
 \begin{figure}[H]
   \centering
   \begin{subfigure}{.5\textwidth}
