@@ -2,7 +2,8 @@
 \chapter{Results}
 \label{cha:Results}
 
-In Figure \ref{img:all_training} is shown the progress for the training of each model and dataset combination, with losses and validation metrics.
+In Figure \ref{img:all_training} the progress for the training of each model and dataset combination is shown. Losses
+and validation metrics are also displayed.
 
 % \begin{figure}[H]
 %   \centering
@@ -41,6 +42,7 @@ In Figure \ref{img:all_training} is shown the progress for the training of each 
 
 The models have been trained for up to 16k iterations (1 step equals 10 iterations), however from the graphs it's clear that in most cases that was much more than needed. ESRGAN and Real-ESRGAN show similar behavior, with PSNR steadily increasing and SSIM decreasing after around 2k to 3k iterations. HAT-L and SwinIR also had similar behaviours plateauing at around 5k iterations with results definitely better than their GAN-based counterparts. At first glance, the transformer-based model performed much better compared to the others, but the real surprise comes when checking the perceptual similarity metrics.
 
+\section{Metrics and Inference}
 
 \begin{figure}[H]
   \centering
@@ -85,7 +87,7 @@ In red and blue are highlighted respectively the best and second-best score for 
   \caption{Final results compared side by side.}
   \label{img:comp_table}
 \end{figure}
-\#TODO citare allegati
+
 In Figure \ref{img:comp_table} is even clearer the reason for good perceptual similarity scores in Real-ESRGAN and ESRGAN: the supersampled images from HAT-L and SwinIR look blurred while the other two are sharp with fine details and defined edges.
 
 Although the networks behaved very differently the results of Real-ESRGAN and ESRGAN are very pleasing, not only the models are able to create sharp and realistic images but they also learned extremely well to transfer the style of the HR camera to the LR frames, mimicing color balance and even exposure to a satistactory degree.
@@ -96,4 +98,4 @@ Although the networks behaved very differently the results of Real-ESRGAN and ES
   \label{img:example_table}
 \end{figure}
 
-In Figure \ref{img:example_table} are highlighted some details from a \(128\times128\) frame supersampled to \(512\times512\) using Real-ESRGAN, even though some detail are lost in the process the quality of the image in much higher compared to a shallow bicubic interpolation and the style is very close to the one of the high-resolution camera.
+In Figure \ref{img:example_table} are highlighted some details from a \(128\times128\) frame supersampled to \(512\times512\) using Real-ESRGAN, even though some detail are lost in the process the quality of the image in much higher compared to a shallow bicubic interpolation and the style is very close to the one of the high-resolution camera. More supersampled examples for all the models are present in the attachments.

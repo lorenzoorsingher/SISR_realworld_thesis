@@ -36,6 +36,11 @@
             "language": "latex",
             "scheme": "file",
             "pattern": "src/chapters/capitolo1.tex"
+        },
+        {
+            "language": "latex",
+            "scheme": "file",
+            "pattern": "src/chapters/capitolo6.tex"
         }
     ],
 }

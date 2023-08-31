@@ -26,7 +26,7 @@ The focal length of a lens defines the AFOV, for a given sensor size, the shorte
   \centering
   \includegraphics[scale=0.5]{figures/AFOV.png}
   \caption{For a given sensor size H a longer focal length produces a larger AFOV}
-\end{figure}50 555
+\end{figure}
 
 The term distortion is often applied interchangeably with reduced image quality. However, distortion is an individual aberration that does not reduce the information in the image; most aberrations mix information together to create image blur, distortion simply misplaces information geometrically. This means that known distortion can be mapped or calculated and removed from an image, whereas information from other aberrations is lost and cannot easily be recreated.
 
@@ -42,7 +42,7 @@ Distortion is determined by the optical design of the lens. Lenses with larger F
 As shown in Figure \ref{img:og_sbs} both images suffer from a great amount of distortion, it's especially noticeable on the sides of the image. A solution to this problem is to calibrate both cameras and use the obtained information to reproject all the image points without distortion.
 
 Nevertheless removing the distortion is not enough, it's easy to see how the LR camera, with its shorter focal length and larger AFOV, captures a much larger angular section of the world compared to its HR counterpart, this is a spatial misalignment problem, but not the only cause. As explained previously both cameras are fixed in place, however, the entire rig is subject to strong vibrations caused by turbulences, high speed and the four motors spinning at tens of thousands of rounds per minute. All this shaking causes the cameras to move slightly in all three axes, requiring further work in post-processing to get the images aligned.
-It's been decided to ignore the parallax error produced by the distance between the cameras. The two sensors sit at approximately \#TODO cm one from another, this causes a sort of "stereo" effect when subjects come close to the camera lenses, however, due to the large AFOV this effect is present only at close distances, unlike the dataset videos which are almost entirely shown subject at several meters of distance, rendering the effect less noticeable or missing completely.\newline
+It's been decided to ignore the parallax error produced by the distance between the cameras. The two sensors sit at approximately 2cm one from another, this causes a sort of "stereo" effect when subjects come close to the camera lenses, however, due to the large AFOV this effect is present only at close distances, unlike the dataset videos which are almost entirely shown subject at several meters of distance, rendering the effect less noticeable or missing completely.\newline
 
 Another notable problem encountered during the dataset processing is temporal alignment. The cameras shoot at 25fps and 60fps with shutter speeds of, respectively, 1/50s and 1/120s, the result is that only a few frames end up capturing the same instant, with some partially overlapping and others starting at different times.
 
@@ -60,7 +60,7 @@ How these three problems have been tackled will be discussed in greater detail i
 \label{sec:cameras}
 
 HR frames have been captured using a Runcam 2\cite{runcam}, the digital camera offers to record at \(1920\times1440\)@30, 1080p@60 and 720p@120. To compromise between resolution and frame rate all the HR clips have been recorded in FullHD  \(1920\times1080\) at 60 frames per second, although the camera is capable of capturing higher resolution images a lower frame rate would have made it difficult to synchronize LR and HR frames resulting in a much lower amount of valid matches.
-\begin{figure}[h]
+\begin{figure}[H]
   \centering
   \includegraphics[scale=0.5]{figures/recording_schematics_2.png}
   \caption{Structure of the recording scheme}
@@ -129,7 +129,7 @@ The intrinsic camera matrix is not the only set of parameters estimated during t
 
 The estimation algorithm is based on \cite{888718} and \cite{matlab}, several pictures of a calibration pattern of known geometry are taken from different positions, for each view of the pattern the algorithm computes the intrinsic parameters, after that the camera position in respect to the calibration pattern is estimated using solvePnP\cite{opencvsolvepnp}. The last step is to run the Levenberg-Marquardt optimization algorithm to minimize the reprojection error (sum of the square distances between the observed features on the calibration pattern and the estimated position of said feature reprojecting the 3D object point on the visual plane).
 
-Most of the time a chessboard pattern is enough to perform this kind of calibrate, however, OpenCV's findChessboardCorners \#TODO function only detects the pattern when the entire board is in frame, this means that the detection fails most of the time when the board is moved to the corners of the screen, which is exactly where the distortion is more pronounced. For this reason, a ChArUco board has been used instead.
+Most of the time a chessboard pattern is enough to perform this kind of calibrate, however, OpenCV's \emph{findChessboardCorners} function only detects the pattern when the entire board is in frame, this means that the detection fails most of the time when the board is moved to the corners of the screen, which is exactly where the distortion is more pronounced. For this reason, a ChArUco board has been used instead.
 
 \begin{figure}[h]
   \centering
@@ -198,7 +198,7 @@ Figure \ref{fig:calib_stats_LR} and Figure \ref{fig:calib_stats_HR} show how, fo
 
 A second factor to take into consideration is the distribution of errors, RMS reprojection error only gives information about the averaged distance between detected and reprojected points without taking into account their direction. Figures \ref{fig:reprj_dist_LR} and \ref{fig:reprj_dist_HR} show how for each combination of threshold and number of samples the reprojected points differ from their detected position on the two axes, a good calibration will show a cloud of datapoints distributed uniformly around the origin, if the spread it skewed in one direction that might be the symptom of a poor estimation or bad measurements. It's worth mentioning that these kinds of off-center patterns are not evident from the RMS error reading alone so it's good practice to run a specific check for these particular occurences.
 
-The final calibrations used for this dataset had RMS reprojection errors of, respectively, 0.67px for the low-resolution camera and 0.98px for the high-resolution camera. Once obtained the intrinsic camera matrix and the distortion coefficients vector it is enough to pass them and the distorted image as parameters to OpenCV's undistort \#TODO function to get the rectified results.
+The final calibrations used for this dataset had RMS reprojection errors of, respectively, 0.67px for the low-resolution camera and 0.98px for the high-resolution camera. Once obtained the intrinsic camera matrix and the distortion coefficients vector it is enough to pass them and the distorted image as parameters to OpenCV's \emph{undistort} function to get the rectified results.
 
 \begin{figure}[H]
   \centering
@@ -310,7 +310,7 @@ In Figure \ref{img:matchtempl} it's very clear the movement of HR recording comp
 
 While, as mentioned before, it's possible to further refine the alignment by running the feature matching on top of the match template procedure it's been decided to ditch this extra step as the improvements to the dataset precision were marginal at the cost of increasing the computation time by an order of magnitude.
 
-\section{Final dataset result}
+\section{Resulting Dataset}
 \label{sec:final_dataset}
 
 Once the spatial alignment is done the images are finally ready to be resized for the actual dataset. As an intermediate step, every frame is, firstly cropped as a square and then resized to 1024 before being written to disk. The trainings were run with different images sizes, all smaller than  \(1024\times1024\), by storing them like this a lot of time is saved when creating different shaped dataset as the whole alignment doesn't need to be run again and the additional whole read, resize and write procedure takes just seconds even with thousands of images.
