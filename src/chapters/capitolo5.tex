@@ -85,5 +85,15 @@ In red and blue are highlighted respectively the best and second-best score for 
   \caption{Final results compared side by side.}
   \label{img:comp_table}
 \end{figure}
+\#TODO citare allegati
+In Figure \ref{img:comp_table} is even clearer the reason for good perceptual similarity scores in Real-ESRGAN and ESRGAN: the supersampled images from HAT-L and SwinIR look blurred while the other two are sharp with fine details and defined edges.
 
-In Figure \ref{img:comp_table} is even clearer the reason for good perceptual similarity results in Real-ESRGAN and ESRGAN: the supersampled images from HAT-L and SwinIR look blurred while the other two are sharp with fine details and defined edges.
+Although the networks behaved very differently the results of Real-ESRGAN and ESRGAN are very pleasing, not only the models are able to create sharp and realistic images but they also learned extremely well to transfer the style of the HR camera to the LR frames, mimicing color balance and even exposure to a satistactory degree.
+
+\begin{figure}[H]
+  \includegraphics[scale=0.3]{figures/results/realesrgan128_example_table.png}
+  \caption{Details of a supersampled \(128\times128\) frame}
+  \label{img:example_table}
+\end{figure}
+
+In Figure \ref{img:example_table} are highlighted some details from a \(128\times128\) frame supersampled to \(512\times512\) using Real-ESRGAN, even though some detail are lost in the process the quality of the image in much higher compared to a shallow bicubic interpolation and the style is very close to the one of the high-resolution camera.
