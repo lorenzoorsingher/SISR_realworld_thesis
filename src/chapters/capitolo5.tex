@@ -1,37 +1,46 @@
-
+\newpage
 \chapter{Results}
 \label{cha:Results}
 
+In Figure \ref{img:all_training} is shown the progress for the training of each model and dataset combination, with losses and validation metrics.
+
+% \begin{figure}[H]
+%   \centering
+%   \includegraphics[scale=0.8]{figures/ESRGAN_compose.png}
+%   \caption{PSNR, SSIM, gan loss and perceptual loss for ESRGAN over the training arch.}
+%   \label{img:esrgan_training}
+% \end{figure}
+
+% \begin{figure}[H]
+%   \centering
+%   \includegraphics[scale=0.8]{figures/RealESRGAN_compose.png}
+%   \caption{PSNR, SSIM, gan loss and perceptual loss for Real-ESRGAN over the training arch.}
+%   \label{img:realesrgan_training}
+% \end{figure}
+
+% \begin{figure}[H]
+%   \centering
+%   \includegraphics[scale=0.8]{figures/SwinIR_compose.png}
+%   \caption{PSNR, SSIM and loss for SwinIR over the training arch.}
+%   \label{img:swinir_training}
+% \end{figure}
+
+% \begin{figure}[H]
+%   \centering
+%   \includegraphics[scale=0.8]{figures/HATL_compose.png}
+%   \caption{PSNR, SSIM and loss for HAT-L over the training arch.}
+%   \label{img:hat_training}
+% \end{figure}
 
 \begin{figure}[H]
   \centering
-  \includegraphics[scale=0.8]{figures/ESRGAN_compose.png}
-  \caption{PSNR, SSIM, gan loss and perceptual loss for ESRGAN over the training arch.}
-  \label{img:esrgan_training}
-\end{figure}
-
-\begin{figure}[H]
-  \centering
-  \includegraphics[scale=0.8]{figures/RealESRGAN_compose.png}
-  \caption{PSNR, SSIM, gan loss and perceptual loss for Real-ESRGAN over the training arch.}
-  \label{img:realesrgan_training}
-\end{figure}
-
-\begin{figure}[H]
-  \centering
-  \includegraphics[scale=0.8]{figures/SwinIR_compose.png}
-  \caption{PSNR, SSIM and loss for SwinIR over the training arch.}
-  \label{img:swinir_training}
-\end{figure}
-
-\begin{figure}[H]
-  \centering
-  \includegraphics[scale=0.8]{figures/HATL_compose.png}
-  \caption{PSNR, SSIM and loss for HAT-L over the training arch.}
-  \label{img:hat_training}
+  \includegraphics[scale=0.15,angle=90,origin=c]{figures/ALL_compose2.png}
+  \caption{PSNR, SSIM and loss for all the models over the training arch.}
+  \label{img:all_training}
 \end{figure}
 
 The models have been trained for up to 16k iterations (1 step equals 10 iterations), however from the graphs it's clear that in most cases that was much more than needed. ESRGAN and Real-ESRGAN show similar behavior, with PSNR steadily increasing and SSIM decreasing after around 2k to 3k iterations. HAT-L and SwinIR also had similar behaviours plateauing at around 5k iterations with results definitely better than their GAN-based counterparts. At first glance, the transformer-based model performed much better compared to the others, but the real surprise comes when checking the perceptual similarity metrics.
+
 
 \begin{figure}[H]
   \centering
@@ -41,7 +50,7 @@ The models have been trained for up to 16k iterations (1 step equals 10 iteratio
 \end{figure}
 
 
-The disparity in performance between HAT-L and SwinIR, as opposed to Real-ESRGAN and the even more dated ESRGAN, is truly surprising when taking into account the much higher results scored by HAT-L and SwinIR in SSIM and PSNR. This phenomenon is evident in Figure \ref{img:lpips}, notably, the transformer-based models, HAT-L and SwinIR, exhibit a deteriorating trend in perceptual similarity over their training duration, in stark contrast ESRGAN and Real-ESRGAN show constant improvements for the entire arch of training. Table \ref{tab:metrics} provides a comprehensive array of metrics, offering a more comprehensive understanding of the models' performances. This analysis includes Bicubic Interpolation as a baseline, serving as a reference point.
+The disparity in performance between HAT-L and SwinIR, as opposed to Real-ESRGAN and the even more dated ESRGAN, is truly surprising when taking into account the much higher results scored by HAT-L and SwinIR in SSIM and PSNR. This phenomenon is evident in Figure \ref{img:lpips}, notably, the transformer-based models, HAT-L and SwinIR, exhibit a deteriorating trend in perceptual similarity over their training duration, in stark contrast ESRGAN and Real-ESRGAN show constant improvements for the entire arch of training. Table \ref{tab:metrics} provides a comprehensive array of metrics, offering a better understanding of the models' performances. This analysis includes Bicubic Interpolation as a baseline, serving as a reference point.
 
 
 \begin{table}[H]
@@ -61,7 +70,11 @@ The disparity in performance between HAT-L and SwinIR, as opposed to Real-ESRGAN
   \end{tabular}
   \end{table}
 
-The results in Table \ref{tab:metrics} have been evaluated taking into consideration for each combination of model and dataset the checkpoint with best performance. With that model, each LR image of the validation set has been supersampled and analyzed with its corresponding ground truth. Unlike for the results in Figures \ref{img:esrgan_training}, \ref{img:realesrgan_training}, \ref{img:swinir_training} and \ref{img:hat_training}, the implementation of SSIM and PSNR used is not the one provided directly by BasicSR but we used Torchmetrics' implementation, the LPIPS implementation comes from the original library \cite{lpips2}.
+Although already present in the validation metrics, both PSNR and SSIM have been measured again along LPIPS for more consistent results and a better leveled field.
+
+The results in Table \ref{tab:metrics} have been evaluated taking into consideration for each combination of model and dataset the checkpoint with best performance.
+With that model, each LR image of the validation set has been supersampled and analyzed with its corresponding ground truth (GT), once recorded the evalutaion outcome for each pair or supersampled image and high resolution GT the totals were averaged over the entire set and saved. Unlike for the results in Figure \ref{img:all_training}, the implementation of SSIM and PSNR used is not the one provided directly by BasicSR but we used Torchmetrics' implementation, the LPIPS implementation comes from the original library \cite{lpips2}.
+
 
 In red and blue are highlighted respectively the best and second-best score for each metric. While SwinIR outperformed all the other models in both PSNR and SSIM and HAT-L comes a close second in the same metrics, Real-ESRGAN and ESRGAN showed the best results overall for perceptual similarity with a good margin on the transformer-based models.
 

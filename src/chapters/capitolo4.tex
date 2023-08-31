@@ -1,3 +1,4 @@
+\newpage
 \chapter{Training}
 \label{cha:Training}
 
@@ -57,3 +58,10 @@ To evaluate the model performance we used three different metrics: PSNR, SSIM an
 
 
 A higher PSNR and SSIM value indicates better image quality, as it signifies a smaller amount of distortion between the original and the processed image. However, it's important to note that while PSNR and SSIM are widely used metrics, it does not always correlate perfectly with human perception of image quality. In some cases, images with higher values might still appear perceptually worse to human observers due to the limitations of the metric in capturing certain types of image distortions that humans are sensitive to. To compensate for this LPIPS provides an excellent estimation of perceptual similarity between images that closely mimics what the human eye can see. A lower LPIPS score means the images are more similar.
+
+\section{Training Configuration}
+\label{sec:configuration}
+
+For the super resolution task all the models have been trained with a scale factor of x4. Logging was done using the support of the Weights\&Biases platform in the trainig pipeline, the tool allows us to record all the metrics and statistics in real time online and offers the possibilty of pausing and resuming all the logging runs even in case of crashes or interruptions. This comes very handy as Colab oftentimes will disconnect the runtime if left unattended for extended periods of time since the platform is meant for interactive use.
+
+Logs have been recorded every 10 iterations meanwhile the validation metrics have been evaluated every 300 iterations. Checkpoints and training states have been saved, outside of the cloud runtime, concurrently with every validation.
