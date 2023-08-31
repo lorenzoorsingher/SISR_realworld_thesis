@@ -1,3 +1,59 @@
-\chapter{Conclusioni}
-\label{cha:conclusioni}
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sed nunc orci. Aliquam nec nisl vitae sapien pulvinar dictum quis non urna. Suspendisse at dui a erat aliquam vestibulum. Quisque ultrices pellentesque pellentesque. Pellentesque egestas quam sed blandit tempus. Sed congue nec risus posuere euismod. Maecenas ut lacus id mauris sagittis egestas a eu dui. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Pellentesque at ultrices tellus. Ut eu purus eget sem iaculis ultricies sed non lorem. Curabitur gravida dui eget ex vestibulum venenatis. Phasellus gravida tellus velit, non eleifend justo lobortis eget.
+\chapter{Training}
+\label{cha:Training}
+
+Most of the training has been done using Google Colab Pro on 16GB NVIDIA T4 and NVIDIA V100 GPUs. Due to memory constraints, all models have been trained on the 64 to 256 dataset while only for some it's been possible to use the 128 to 512 dataset.
+All trainings were run on pre-trained weights, fine-tuning the model until no improvements could be observed on loss and metrics.
+
+\begin{itemize}
+  \item weights for ESRGAN have been pre-trained on  DIV2K\cite{Agustsson_2017_CVPR_Workshops}, Flickr2K\cite{Lim_2017_CVPR_Workshops} and OutdoorSceneTraining\cite{wang2018recovering}. It's been possible to fine-tune the model with all our datasets: 64 to 256, 64 to 256 patches and 128 to 512. For each run, it's been used batch sizes of 4 and 2 and the memory allocated was on average around 7GB for the smaller dataset and 13GB for the bigger one.
+  \item Similar to ESRGAN, Real-ESRGAN comes with weights pre-trained on DIV2K, Flickr2K, and OutdoorSceneTraining. The models have been trained on all datasets and, since they share the same generator architecture, the memory allocated was similar to the numbers of ESRGAN.
+  \item SwinIR provides weights pre-trained on DIV2K, just like the SRGAN-based models it's been trained on all the dataset configurations with batch sizes of 4 and 2. The memory allocated was around 8GB for the smaller dataset and 14GB for the bigger dataset.
+  \item HAT-L proved to be the heaviest of the models. It needed on average 15GB of VRAM just to run the smaller 64 to 256 dataset on a batch size of 2, for this reason, it wasn't possible to try the larger 128 to 512 dataset. The pre-trained weights provided with the model are trained with ImageNet\cite{deng2009imagenet}.
+\end{itemize}
+
+\section{Metrics}
+\label{sec:metrics}
+
+To evaluate the model performance we used three different metrics: PSNR, SSIM and LPIPS. The first two come integrated into the BasicSR framework and are run at training time during validation, we decided to run additional tests with LPIPS as the powerful metric can in many cases be a better measure of the human eye perception.
+
+\subsection{PSNR}
+\label{subsec:psnr}
+  PSNR\cite{psnr} stands for "Peak Signal-to-Noise Ratio." It is a metric used to measure the quality of a reconstructed or compressed image or video in comparison to the original, uncompressed version. PSNR is widely used in the field of image and video processing to quantify the level of distortion introduced during compression or transmission.
+
+  The PSNR value is calculated by comparing the maximum possible pixel value (usually 255 for an 8-bit image) to the mean squared error (MSE) between the original and the reconstructed/compressed image. The formula for calculating PSNR is as follows:
+  \[
+  \text{PSNR} = 10 \cdot \log_{10}\left(\frac{\text{MAX}^2}{\text{MSE}}\right)
+  \]
+
+  where \(MAX\) is the maximum possible pixel value and \(MSE\) is the mean squared error between the original and reconstructed images.
+
+\subsection{SSIM}
+\label{subsec:ssim}
+  The structural similarity index measure (SSIM\cite{ssim}) is a method for predicting the perceived quality of digital images and videos. SSIM is used for measuring the similarity between two images. The SSIM index, just like PSNR, is a full reference metric; in other words, the measurement or prediction of image quality is based on an initial uncompressed or distortion-free image as a reference. The measure between two windows \(x\) and \(y\) of common size \(N \times N\) is:
+
+
+  \begin{equation}
+    \SSIM(x,y) = \frac{(2\mu_x\mu_y + C_1) + (2 \sigma _{xy} + C_2)}
+      {(\mu_x^2 + \mu_y^2+C_1) (\sigma_x^2 + \sigma_y^2+C_2)}
+    \label{eq:SSMI}
+  \end{equation}
+
+  with:
+  \begin{itemize}
+    \itemsep0em
+    \item \(y_x\) the pixel sample mean of \(x\)
+    \item \(y_y\) the pixel sample mean of \(y\)
+    \item \(\sigma_x^2\) the variance of \(x\)
+    \item \(\sigma_y^2\) the variance of \(y\)
+    \item \(\sigma _{xy}\) the cross-correlation between \(x\) and \(y\)
+    \item \(C_1\) and \(C_2\) two variables to stabilize the division with weak denominator
+  \end{itemize}
+
+\subsection{LPIPS}
+\label{subsec:LPIPS}
+  Perceptual metrics such as PSNR and SSIM, are simple, shallow functions, and fail to account for many nuances of human perception. The deep learning community has found that features
+  of the VGG network trained on ImageNet classification has
+  been remarkably useful as a training loss for image synthesis \cite{zhang2018unreasonable}, in our specific case the LPIPS (Learned Perceptual Image Patch Similarity) of choice uses the activation layers from AlexNet \cite{NIPS2012_c399862d}
+
+
+A higher PSNR and SSIM value indicates better image quality, as it signifies a smaller amount of distortion between the original and the processed image. However, it's important to note that while PSNR and SSIM are widely used metrics, it does not always correlate perfectly with human perception of image quality. In some cases, images with higher values might still appear perceptually worse to human observers due to the limitations of the metric in capturing certain types of image distortions that humans are sensitive to. To compensate for this LPIPS provides an excellent estimation of perceptual similarity between images that closely mimics what the human eye can see. A lower LPIPS score means the images are more similar.
