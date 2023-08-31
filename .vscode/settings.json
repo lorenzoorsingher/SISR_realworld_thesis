@@ -21,4 +21,21 @@
             "tooltip": "Avvia Tectonic in modalità \"continua\": compila il PDF ogni volta che i file vengono modificati"
         }
     ],
+    "grammarly.selectors": [
+        {
+            "language": "latex",
+            "scheme": "file",
+            "pattern": "src/chapters/capitolo3.tex"
+        },
+        {
+            "language": "latex",
+            "scheme": "file",
+            "pattern": "src/chapters/capitolo2.tex"
+        },
+        {
+            "language": "latex",
+            "scheme": "file",
+            "pattern": "src/chapters/capitolo1.tex"
+        }
+    ],
 }
