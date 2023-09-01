@@ -58,6 +58,7 @@ The disparity in performance between HAT-L and SwinIR, as opposed to Real-ESRGAN
 \begin{table}[H]
   \caption{Evaluated metrics for each combination of model and dataset, highlighted in red are the best results and in blue the second best. Bicubic interpolation is added as a baseline.}
   \label{tab:metrics}
+  \begin{adjustbox}{max width=\textwidth}
   \begin{tabular}{c|ccc|ccc|ccc|}
   \cline{2-10}
   \rowcolor[HTML]{C0C0C0}
@@ -70,20 +71,21 @@ The disparity in performance between HAT-L and SwinIR, as opposed to Real-ESRGAN
   \multicolumn{1}{|c|}{\textbf{HAT-L}}                                                           & \multicolumn{1}{c|}{{\color[HTML]{3531FF} 21.63}}          & \multicolumn{1}{c|}{{\color[HTML]{3531FF} 0.478}}          & 0.651                        & \multicolumn{1}{c|}{{\color[HTML]{3531FF} 18.71}}          & \multicolumn{1}{c|}{{\color[HTML]{3531FF} 0.409}}          & 0.684                        & \multicolumn{1}{c|}{/}                                     & \multicolumn{1}{c|}{/}                                     & /                            \\ \hline
   \multicolumn{1}{|l|}{\textbf{\begin{tabular}[c]{@{}l@{}}Bicubic\\ Interpolation\end{tabular}}} & \multicolumn{1}{l|}{11.82}                                 & \multicolumn{1}{l|}{0.354}                                 & \multicolumn{1}{l|}{0.774}   & \multicolumn{1}{l|}{11.76}                                 & \multicolumn{1}{l|}{0.287}                                 & \multicolumn{1}{l|}{0.717}   & \multicolumn{1}{l|}{11.71}                                 & \multicolumn{1}{l|}{0.332}                                 & \multicolumn{1}{l|}{0.735}   \\ \hline
   \end{tabular}
+  \end{adjustbox}
   \end{table}
 
 Although already present in the validation metrics, both PSNR and SSIM have been measured again along LPIPS for more consistent results and a better leveled field.
 
 The results in Table \ref{tab:metrics} have been evaluated taking into consideration for each combination of model and dataset the checkpoint with best performance.
-With that model, each LR image of the validation set has been supersampled and analyzed with its corresponding ground truth (GT), once recorded the evalutaion outcome for each pair or supersampled image and high resolution GT the totals were averaged over the entire set and saved. Unlike for the results in Figure \ref{img:all_training}, the implementation of SSIM and PSNR used is not the one provided directly by BasicSR but we used Torchmetrics' implementation, the LPIPS implementation comes from the original library \cite{lpips2}.
+With that model, each LR image of the validation set has been supersampled and analyzed with its corresponding ground truth (GT), once recorded the evalutaion outcome for each pair or supersampled image and high resolution GT the totals were averaged over the entire set and saved. Unlike for the results in Figure \ref{img:all_training}, the implementation of SSIM and PSNR used in Table \ref{tab:metrics} is not the one provided directly by BasicSR but we used Torchmetrics' implementation, the LPIPS implementation comes from the original library \cite{lpips2}.
 
 
-In red and blue are highlighted respectively the best and second-best score for each metric. While SwinIR outperformed all the other models in both PSNR and SSIM and HAT-L comes a close second in the same metrics, Real-ESRGAN and ESRGAN showed the best results overall for perceptual similarity with a good margin on the transformer-based models.
+The best and second-best score for each metric are highlighted respectively in red and blue. While SwinIR outperformed all the other models in both PSNR and SSIM and HAT-L comes a close second in the same metrics, Real-ESRGAN and ESRGAN showed the best results overall for perceptual similarity with a good margin on the transformer-based models.
 
 
 \begin{figure}[H]
 
-  \includegraphics[scale=0.4]{figures/results/comp_table.png}
+  \includegraphics[width=1\textwidth]{figures/results/comp_table.png}
   \caption{Final results compared side by side.}
   \label{img:comp_table}
 \end{figure}
@@ -93,9 +95,9 @@ In Figure \ref{img:comp_table} is even clearer the reason for good perceptual si
 Although the networks behaved very differently the results of Real-ESRGAN and ESRGAN are very pleasing, not only the models are able to create sharp and realistic images but they also learned extremely well to transfer the style of the HR camera to the LR frames, mimicing color balance and even exposure to a satistactory degree.
 
 \begin{figure}[H]
-  \includegraphics[scale=0.3]{figures/results/realesrgan128_example_table.png}
-  \caption{Details of a supersampled \(128\times128\) frame}
+  \includegraphics[width=1\textwidth]{figures/results/realesrgan128_example_table.png}
+  \caption{Details of a supersampled \(128\times128\) frame.}
   \label{img:example_table}
 \end{figure}
 
-In Figure \ref{img:example_table} are highlighted some details from a \(128\times128\) frame supersampled to \(512\times512\) using Real-ESRGAN, even though some detail are lost in the process the quality of the image in much higher compared to a shallow bicubic interpolation and the style is very close to the one of the high-resolution camera. More supersampled examples for all the models are present in the attachments.
+In Figure \ref{img:example_table} some details of a \(128\times128\) frame supersampled to \(512\times512\) using Real-ESRGAN are highlighted. Even though some details are lost in the process, it can be noted that the quality of the image in much higher compared to a shallow bicubic interpolation and the style is very close to the one of the high-resolution camera. More supersampled examples for all the models are present in the appendix.

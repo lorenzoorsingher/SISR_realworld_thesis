@@ -41,6 +41,11 @@
             "language": "latex",
             "scheme": "file",
             "pattern": "src/chapters/capitolo6.tex"
+        },
+        {
+            "language": "latex",
+            "scheme": "file",
+            "pattern": "src/sections/sommario.tex"
         }
     ],
 }

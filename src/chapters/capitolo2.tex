@@ -2,16 +2,16 @@
 \chapter{Dataset}
 \label{cha:dataset}
 
-Most of the existing SISR methods are trained and evaluated on simulated datasets that assume simple and uniform degradation (i.e., bicubic degradation). Unfortunately, SISR models trained on such simulated datasets are hard to generalize to practical applications since the authentic degradations in real-world LR images are much more complex\cite{cai2019realworld}. Creating a large and varied enough dataset of real-world organic data of paired LR-HR images poses a challenge by itself, that being said the results of this research rely heavily on the quality of the data so a lot of work has gone into ensuring that the content of each pair of frames is consistent and reliable without sacrificing too many frames.
+Most of the existing SISR methods are trained and evaluated on simulated datasets that assume simple and uniform degradation (i.e., bicubic degradation). Unfortunately, SISR models trained on such simulated datasets are hard to generalize for practical applications since the authentic degradations in real-world LR images are much more complex\cite{cai2019realworld}. Creating a large and varied enough dataset of real-world data with paired LR-HR images poses a challenge by itself, that being said the results of this research rely heavily on the quality of the data so a lot of work has gone into ensuring that the content of each pair of frames is consistent and reliable without sacrificing too many frames.
 
-The main problems regarding the creation of the LR-HR pairs from two different cameras can be synthesised in:
+The main problems regarding the creation of the LR-HR pairs from two different cameras can be synthesized in:
 \begin{itemize}
   \item different lens distortion
   \item spatial alignment
   \item temporal alignment
 \end{itemize}
 
-Focal length and Field of View are strongly related to the other. The Field of View (FOV) describes the physical area of the world that can be imaged on a sensor through a determined lens system, when described in degrees it's referred to as Angular FOV or AFOV.
+Focal length and Field of View are strongly related to each other. The Field of View (FOV) describes the physical area of the world that can be imaged on a sensor through a determined lens system, when described in degrees it's referred to as Angular FOV or AFOV.
 The focal length of a lens is a fundamental parameter that describes how strongly it focuses or diverges light. A large focal length indicates that light is bent gradually while a short focal length indicates that the light is bent at sharp angles.
 The focal length of a lens defines the AFOV, for a given sensor size, the shorter the focal length, the wider the AFOV. Additionally, the shorter the focal length of the lens, the shorter the distance needed to obtain the same FOV compared to a longer focal length lens\cite{flength}.
 
@@ -34,21 +34,22 @@ Distortion is determined by the optical design of the lens. Lenses with larger F
 
 \begin{figure}[h]
   \centering
-  \includegraphics[scale=0.25]{figures/OG_sbs.png}
+  \includegraphics[width=1\textwidth]{figures/OG_sbs.png}
   \caption{Unprocessed LR and HR frames captured at the same instant}
   \label{img:og_sbs}
 \end{figure}
 
 As shown in Figure \ref{img:og_sbs} both images suffer from a great amount of distortion, it's especially noticeable on the sides of the image. A solution to this problem is to calibrate both cameras and use the obtained information to reproject all the image points without distortion.
 
-Nevertheless removing the distortion is not enough, it's easy to see how the LR camera, with its shorter focal length and larger AFOV, captures a much larger angular section of the world compared to its HR counterpart, this is a spatial misalignment problem, but not the only cause. As explained previously both cameras are fixed in place, however, the entire rig is subject to strong vibrations caused by turbulences, high speed and the four motors spinning at tens of thousands of rounds per minute. All this shaking causes the cameras to move slightly in all three axes, requiring further work in post-processing to get the images aligned.
-It's been decided to ignore the parallax error produced by the distance between the cameras. The two sensors sit at approximately 2cm one from another, this causes a sort of "stereo" effect when subjects come close to the camera lenses, however, due to the large AFOV this effect is present only at close distances, unlike the dataset videos which are almost entirely shown subject at several meters of distance, rendering the effect less noticeable or missing completely.\newline
+Nevertheless removing the distortion is not enough, it's easy to see how the LR camera, with its shorter focal length and larger AFOV, captures a much larger angular section of the world compared to its HR counterpart, this is a spatial misalignment problem, but not the only cause. As explained previously both cameras are fixed in place, however, the entire rig is subject to strong vibrations caused by turbulences, high speed and the four motors spinning at tens of thousands of rounds per minute. All these vibrations cause the cameras to move slightly in all three axes, requiring further work in post-processing to get the images aligned.
+It's been decided to ignore the parallax error produced by the distance between the cameras. In fact, the two sensors sit approximately at 2cm of distance which, thanks to the large AFOV, will only cause a sort of ”stereo” effect when subjects come close to the camera lenses, a situation that does not occur in the dataset: almost
+all the subjects are positioned at several meters of distance. Therefore, the effect is barely detectable or missing completely.\newline
 
-Another notable problem encountered during the dataset processing is temporal alignment. The cameras shoot at 25fps and 60fps with shutter speeds of, respectively, 1/50s and 1/120s, the result is that only a few frames end up capturing the same instant, with some partially overlapping and others starting at different times.
+Another notable problem encountered during the dataset processing is temporal alignment. The cameras shoot respectively at 25fps and 60fps with shutter speeds of 1/50s and 1/120s. The result is that only a few frames end up capturing the same instant, with some partially overlapping and others starting at different times.
 
 \begin{figure}[h]
   \centering
-  \includegraphics[scale=0.22]{figures/temporal_align_3.png}
+  \includegraphics[width=1\textwidth]{figures/temporal_align_3.png}
   \caption{How frames are captured over the span of 1/4 of a second}
   \label{img:temp_align}
 \end{figure}
@@ -64,10 +65,11 @@ HR frames have been captured using a Runcam 2\cite{runcam}, the digital camera o
   \centering
   \includegraphics[scale=0.5]{figures/recording_schematics_2.png}
   \caption{Structure of the recording scheme}
+  \label{img:recordin_schematics}
 \end{figure}
-To capture LR frames we used a CADDXFPV Ratel2 Analog Camera\cite{caddx}. As shown in Figure 1.1, the camera is connected to a 5.8Ghz video transmitter (vTX) that streams the signal to a receiver (vRX) on the ground, the receiver is connected to the navigation screen and also to the DVR (Digital Video Recorder) that saves the video stream on an SD card. While the camera itself can capture 1200TVL the color encoding conversion standard in use is PAL\cite{pal} so according to the standard, once recorded via DVR the resolution of the video is  \(720\times576\) and the frame rate 25 frames per second.
+To capture LR frames we used a CADDXFPV Ratel2 Analog Camera\cite{caddx}. As shown in Figure \ref{img:recordin_schematics}, the camera is connected to a 5.8Ghz video transmitter (vTX) that streams the signal to a receiver (vRX) on the ground, the receiver is connected to the navigation screen and also to the DVR (Digital Video Recorder) that saves the video stream on an SD card. While the camera itself can capture 1200TVL the color encoding conversion standard in use is PAL\cite{pal} so, according to the specifications, once recorded via DVR the resolution of the video is  \(720\times576\) and the frame rate 25 frames per second.
 
-Another major difference between the two cameras is the field of view, respectively 120° for the Runcam and 165° for the Ratel2. This is due a a different combination of lens and sensor size, and results in two widely different video streams with a great amount of distortion, before running any kind of training both images must be rectified and the content of each frame must overlap with the one recorded and the other camera. The final results are shown side-by-side in Table \ref{tab:cam_table}.
+Another major difference between the two cameras is the field of view, respectively 120° for the Runcam and 165° for the Ratel2. This is due a a different combination of lens and sensor size, and results in two widely different video streams with a great amount of distortion. Before running any kind of training both images must be rectified and the content of each frame must overlap with the one recorded and the other camera. The cameras' properties are shown side-by-side in Table \ref{tab:cam_table}.
 
 
 
@@ -93,23 +95,23 @@ Another major difference between the two cameras is the field of view, respectiv
 \section {Camera Calibration}
 \label{sec:camera_calib}
 
-The library OpenCV\cite{opencv} offers a large set of powerful modules for image manipulation and computer vision, among all the others, its pinhole camera model has all the tools to efficiently perform calibration and rectification.
+To perform camera calibration it has been decided to use the OpenCV library \cite{opencv}, which offers a large set of powerful modules for image manipulation and computer vision, among all the others, its pinhole camera model has all the tools to efficiently perform calibration and rectification.
 
 \begin{figure}[h]
   \centering
   \includegraphics[scale=0.3]{figures/pinhole.png}
-  \caption{Illustration of the pinhole camera model}
+  \caption{Illustration of the pinhole camera model.}
   \label{img:pinhole_img}
 \end{figure}
 
-The pinhole camera model describes the mathematical relationship between the coordinates of a point in three-dimensional space and its projection onto the image plane of an ideal pinhole camera, where the camera aperture is described as a point and no lenses are used to focus light\cite{wikipinhole}.
+The pinhole camera model describes the mathematical relationship between the coordinates of a point in three-dimensional space and its projection onto the image plane of an ideal pinhole camera, where the camera aperture is described as a point and no lenses are used to focus light \cite{wikipinhole}.
 The distortion-free projective transformation given by a pinhole camera model is shown below.
 
 \[s \; p = A \begin{bmatrix} R|t \end{bmatrix} P_w,\]
 
-Where \(P_w\) is a 3D point expressed with respect to the world coordinate system, \(p\) is a 2D pixel in the image plane, \(A\) is the camera intrinsic matrix, \(R\) and \(t\) are the rotation and translation that describe the change of coordinates from world to camera coordinate systems (or camera frame) and \(s\) is the projective transformation's arbitrary scaling and not part of the camera model\cite{opencvcalib}.
+Where \(P_w\) is a 3D point expressed with respect to the world coordinate system, \(p\) is a 2D pixel in the image plane, \(A\) is the camera intrinsic matrix, \(R\) and \(t\) are the rotation and translation that describe the change of coordinates from world to camera coordinate systems (or camera frame) and \(s\) is the projective transformation's arbitrary scaling and not part of the camera model \cite{opencvcalib}.
 
-The camera intrinsic matrix \(A\) (Figure \ref{fig:camera_matrix}) projects 3D points given in the camera coordinate system to 2D pixel coordinates, it's composed of the focal lengths \(fx\) and \(fy\), which are expressed in pixel units, and the principal point (\(cx\),\(cy\)), that is usually close to the image center\cite{opencvcalib}\cite{888718}.
+The camera intrinsic matrix \(A\) (Figure \ref{fig:camera_matrix}) projects 3D points given in the camera coordinate system to 2D pixel coordinates, it's composed of the focal lengths \(fx\) and \(fy\), which are expressed in pixel units, and the principal point (\(cx\),\(cy\)), that is usually close to the image center \cite{opencvcalib} \cite{888718}.
 
 \begin{figure}[h]
 \caption{Intrinsic camera matrix}
@@ -127,20 +129,20 @@ The camera intrinsic matrix \(A\) (Figure \ref{fig:camera_matrix}) projects 3D p
 The intrinsic camera matrix is not the only set of parameters estimated during the calibration process. Real lenses introduce, to some degree, barrel distortion and tangential distortion, to compensate for this, a vector of distortion coefficients is estimated along the intrinsic camera matrix and subsequently used in all the applications of the model.\newline
 
 
-The estimation algorithm is based on \cite{888718} and \cite{matlab}, several pictures of a calibration pattern of known geometry are taken from different positions, for each view of the pattern the algorithm computes the intrinsic parameters, after that the camera position in respect to the calibration pattern is estimated using solvePnP\cite{opencvsolvepnp}. The last step is to run the Levenberg-Marquardt optimization algorithm to minimize the reprojection error (sum of the square distances between the observed features on the calibration pattern and the estimated position of said feature reprojecting the 3D object point on the visual plane).
+The estimation algorithm is based on the implementations presented in  \cite{888718} and \cite{matlab}: several pictures of a calibration pattern of known geometry are taken from different positions, for each view of the pattern the algorithm computes the intrinsic parameters, after that the camera position in respect to the calibration pattern is estimated using solvePnP \cite{opencvsolvepnp}. The last step is to run the Levenberg-Marquardt optimization algorithm to minimize the reprojection error (sum of the square distances between the observed features on the calibration pattern and the estimated position of said feature reprojecting the 3D object point on the visual plane).
 
-Most of the time a chessboard pattern is enough to perform this kind of calibrate, however, OpenCV's \emph{findChessboardCorners} function only detects the pattern when the entire board is in frame, this means that the detection fails most of the time when the board is moved to the corners of the screen, which is exactly where the distortion is more pronounced. For this reason, a ChArUco board has been used instead.
+Most of the time a chessboard pattern is enough to perform this kind of calibration, however, OpenCV's \emph{findChessboardCorners} function only detects the pattern when the entire board is in frame, this means that the detection fails most of the time when the board is moved to the corners of the screen, which is exactly where the distortion is more pronounced. For this reason, a ChArUco board has been used instead.
 
 \begin{figure}[h]
   \centering
   \includegraphics[scale=0.15]{figures/charucoboard.png}
-  \caption{ChArUco board used for the calibrations}
+  \caption{ChArUco board used for the calibrations.}
   \label{img:ch_board}
 \end{figure}
 
 The ChArUco board (Figure \ref{img:ch_board}) incorporates a standard chessboard pattern with a set of ArUco markers for detection, this allows the algorithm to detect the unique labels and from that it extrapolates the exact position of each pattern corner even if the board is only partially in frame. Each pattern corner is first refined at a sub-pixel level for better accuracy, and after that, all the detected corners are paired, as 2D coordinates, to the 3D points in the calibration pattern frame of reference.
 
-The quality of the board used for calibration is extremely important for proper parameter estimation, paper or plastic boards can introduce imperceptible deformations that can seriously tarnish the results of the process, on top of that temperature or humidity changes can cause the board to contract or dilate, thus a flat tv screen has been used to run the calibration for both cameras, ensuring a leveled plane and uniform illumination on the entire surface. Another reason to choose a big TV screen over a printed pattern is that the low resolution of the LR camera makes the detection of the ArUco markers difficult, resulting in very close-up videos with mediocre results.
+The quality of the board used for calibration is extremely important for proper parameter estimation, paper or plastic boards can introduce imperceptible deformations that can seriously tarnish the results of the process, on top of that temperature or humidity changes can cause the board to contract or dilate, thus a flat tv screen has been used to run the calibration for both cameras, ensuring a leveled plane and uniform illumination on the entire surface. Another reason to choose a big TV screen over a printed pattern is that the low resolution of the LR camera makes the detection of the ArUco markers difficult.
 
 \begin{figure}[h]
   \centering
@@ -149,7 +151,7 @@ The quality of the board used for calibration is extremely important for proper 
   \label{img:ch_calib}
 \end{figure}
 
-To ensure precise calibration results a flat pattern is appropriate, but not enough. The algorithm needs hundreds of data points over the span of tenths of images, it's important to make sure that the images cover a large volume of angles w.r.t the target and ideally that they are distributed uniformally in the set. In order to follow these constraints closely and to keep the process as repeatable as possible without making it too time-consuming, the calibration pipeline has been divided into two parts that can be run together: datapoints capture and intrinsic parameters estimation.
+To ensure precise calibration results a flat pattern is appropriate, but not enough. The algorithm needs hundreds of data points over the span of tenths of images, it's important to make sure that the images cover a large volume of angles with respect to the target and ideally that they are distributed uniformly in the set. In order to follow these constraints closely and to keep the process as repeatable as possible without making it too time-consuming, the calibration pipeline has been divided into two parts that can be run together: datapoints capture and intrinsic parameters estimation.
 
 During the datapoints capture, the script is fed video taken from one of the two cameras, panning around the calibration pattern, slowly to avoid vibrations and motion blur and progressively covering all the camera frame from various angles and distances. A frame is considered valid when the number of detected corners is higher than a threshold set in advance, this is to make sure that even when part of the board is not visible (i.e. around the corners) data is collected but if too few corners are detected (i.e. due to sudden movements or distance) the data is considered bad and the frame discarded.
 
@@ -162,13 +164,14 @@ A larger amount of images does not necessarily mean a better result and also the
   \begin{subfigure}{.5\textwidth}
     \centering
     \includegraphics[width=.8\linewidth]{figures/reprj_dist_LR.png}
-    \caption{Distrubution of reprojection errors w.r.t. \newline number of samples and threshold.}
+    \caption{Distribution of reprojection errors with
+    \newline respect to number of samples and threshold.}
     \label{fig:reprj_dist_LR}
   \end{subfigure}%
   \begin{subfigure}{.5\textwidth}
     \centering
     \includegraphics[width=0.8\linewidth]{figures/calib_results_table_LR.png}
-    \caption{RMS reprojection error averaged over 20 calibrations and standard deviation w.r.t. number of samples and threshold.}
+    \caption{RMS reprojection error averaged over 20 calibrations and standard deviation with respect to number of samples and threshold.}
     \label{fig:calib_stats_LR}
   \end{subfigure}
   \caption{Analysis of the calibration results with the LR camera.}
@@ -180,13 +183,14 @@ A larger amount of images does not necessarily mean a better result and also the
   \begin{subfigure}{.5\textwidth}
     \centering
     \includegraphics[width=.8\linewidth]{figures/reprj_dist_HR.png}
-    \caption{Distrubution of reprojection errors w.r.t. \newline number of samples and threshold.}
+    \caption{Distribution of reprojection errors with
+    \newline respect to number of samples and threshold.}
     \label{fig:reprj_dist_HR}
   \end{subfigure}%
   \begin{subfigure}{.5\textwidth}
     \centering
     \includegraphics[width=0.8\linewidth]{figures/calib_results_table_HR.png}
-    \caption{RMS reprojection error averaged over 20 calibrations and standard deviation w.r.t. number of samples and threshold.}
+    \caption{RMS reprojection error averaged over 20 calibrations and standard deviation with respect to number of samples and threshold.}
     \label{fig:calib_stats_HR}
   \end{subfigure}
   \caption{Analysis of the calibration results with the HR camera.}
@@ -202,7 +206,7 @@ The final calibrations used for this dataset had RMS reprojection errors of, res
 
 \begin{figure}[H]
   \centering
-  \includegraphics[scale=0.4]{figures/bef_aft_rect.png}
+  \includegraphics[width=1\textwidth]{figures/bef_aft_rect.png}
   \caption{The same image before and after the rectification.}
   \label{img:rectify_sbs}
 \end{figure}
@@ -212,13 +216,13 @@ Figure \ref{img:rectify_sbs} shows side by side the rectification result, a grid
 \section{Temporal Alignment}
 \label{sec:temp_align}
 
-The temporal alignment process is rather simple: find a pair of frames taken at the same instant and use them as frame of reference to navigate synchronized through the videos.
+The temporal alignment process is rather simple: find a pair of frames taken at the same instant and use them as frame of reference to navigate in a synchronized way through the videos.
 
 The two cameras are not wired one to the other so while it's not possible to get perfect synchronization it's feasible to extrapolate a good enough approximation that can be refined further processing the images. The first step is to find two frames that are as close as possible, to achieve this in the first few seconds of every clip an external timer is recorded by both cameras, afterward, in post processing both clips are shown side by side and, manually, a pair of frames is chosen as reference and the frame indexes are saved in the corresponding clips folder.
 
 \begin{figure}[H]
   \centering
-  \includegraphics[scale=0.4]{figures/time_sync.png}
+  \includegraphics[width=0.8\textwidth]{figures/time_sync_kp.png}
   \caption{Videos are shown side by side and it's possible to move independently frame by frame until a correspondence is found.}
   \label{img:time_sync}
 \end{figure}
@@ -230,13 +234,13 @@ It should be emphasized that since the cameras are not physically synchronized a
 \section{Spatial Alignment}
 \label{sec:spatial_align}
 
-The two cameras have widely different AFOVs, so it's clear that the images, as they come out of the rectification and synchronization, frame two much different sections of the world, on top of that, even if the cameras are fixed in place and point to the same direction it can't be taken for granted that the mounting positions are aligned to the degree of precision needed to create a practical dataset.
+The two cameras have widely different AFOVs, so it's clear that the images, as they come out of the rectification and synchronization, depict two much different sections of the world, on top of that, even if the cameras are fixed in place and point to the same direction it can't be taken for granted that the mounting positions are aligned to the degree of precision needed to create a practical dataset.
 
-The first step of the spatial alignment is geometrically transform one of the two images so that the content of both overlaps, this is done manually, it's important to do it separately for each pair of clips: landing, moving the drone around, removing and inserting the SD cards in the camera, all the mentioned action can cause small movements of the camera that render any alignment done beforehand, useless.
+The first step of the spatial alignment is to geometrically transform one of the two images so that the content of both overlaps, this is done manually, it's important to do it separately for each pair of clips: landing, moving the drone around, removing and inserting the SD cards in the camera, all the mentioned action can cause small movements of the camera that render any alignment done beforehand, useless.
 
 \begin{figure}[H]
   \centering
-  \includegraphics[scale=1.5]{figures/HR_on_LR_M_err_highlight.png}
+  \includegraphics[width=0.7\textwidth]{figures/HR_on_LR_M_err_highlight.png}
   \caption{Sharp turns and sudden movements make the small misalignments more evident. Here the HR frame is overlapped to the LR one to fit the same world area using only the manual alignment.}
   \label{img:align_err}
 \end{figure}
@@ -266,9 +270,9 @@ Testing revealed that on this task SIFT performed much better compared to ORB, t
 
 \begin{figure}[H]
   \centering
-  \includegraphics[scale=0.2]{figures/ORB.png}
-  \includegraphics[scale=0.2]{figures/SIFT.png}
-  \includegraphics[scale=0.2]{figures/FLANN.png}
+  \includegraphics[width=1\textwidth]{figures/ORB.png}
+  \includegraphics[width=1\textwidth]{figures/SIFT.png}
+  \includegraphics[width=1\textwidth]{figures/FLANN.png}
   \caption{In order, ORB, SIFT, SIFT with FLANN. While keeping the same constraints for all three approaches, using SIFT with FLANN matcher resulted in many more and much more consistent datapoints.}
   \label{img:orb_sift}
 \end{figure}
@@ -279,7 +283,7 @@ On top of that results are not as consistent as hoped, while most of the frames 
 
 \begin{figure}[H]
   \centering
-  \includegraphics[scale=1.2]{figures/deep_match_sbs.png}
+  \includegraphics[width=1\textwidth]{figures/deep_match_sbs.png}
   \caption{The light blue rectangle represents how the HR frame fits in the LR frame using the standard clip alignment, the green rectangle is the fit of the HR image once the refined alignment procedure is run on this specific pair of frames. On the right is the final result. It must be noted that this image is just for reference, in the actual script the HR frame is left untouched to preserve its image quality, while the LR one endures all the warping and scaling.}
   \label{img:deep_match}
 \end{figure}
@@ -287,7 +291,7 @@ On top of that results are not as consistent as hoped, while most of the frames 
 \subsection {Template Matching}
 \label{subsec:template_match}
 
-Automatically verifying the quality of the alignment is not an easy task if there was a metric to unequivocally define how precisely the two images match, that would be surely used in the alignment process itself. One could think to use template matching and although the absolute value of the match doesn't say much when the images are so intrinsically different, it can effectively rank how close a set of frames low-resolution frames is compared to a high-resolution one.
+Automatically verifying the quality of the alignment is not an easy task: if there was a metric to unequivocally define how precisely the two images match, that would be surely used in the alignment process itself. One could think to use template matching and, although the absolute value of the match doesn't say much when the images are so intrinsically different, it can effectively rank how close a set of low-resolution frames is compared to a high-resolution one.
 
 This is the idea behind the second approach to spatial alignment. As mentioned before the non-perfect synchronization of frames (which is impossible if the two triggers are not communicating or if one camera is shooting at a much higher framerate than the other) is a big factor when considering moving objects which, in this project, is the case but it can also be used to our advantage. The small offsets introduced by the camera movement over adjacent frames on a small window of time can actually compensate for the misalignments due to other factors.
 
@@ -301,7 +305,7 @@ Ideally, if calibration, synchronization and alignment were perfect when visuali
 
 \begin{figure}[H]
   \centering
-  \includegraphics[scale=1.4]{figures/matchtemplate.png}
+  \includegraphics[width=0.7\textwidth]{figures/matchtemplate.png}
   \caption{Two different sequences of frames. On the bottom the buffer of 5 HR frames followed by the LR one. On the top the visualization of the coordinates of the best match for each frame, in red is highlighted the position of the frame below, in green is the highlighted the pixel that scored the highest overall.}
   \label{img:matchtempl}
 \end{figure}
@@ -313,26 +317,26 @@ While, as mentioned before, it's possible to further refine the alignment by run
 \section{Resulting Dataset}
 \label{sec:final_dataset}
 
-Once the spatial alignment is done the images are finally ready to be resized for the actual dataset. As an intermediate step, every frame is, firstly cropped as a square and then resized to 1024 before being written to disk. The trainings were run with different images sizes, all smaller than  \(1024\times1024\), by storing them like this a lot of time is saved when creating different shaped dataset as the whole alignment doesn't need to be run again and the additional whole read, resize and write procedure takes just seconds even with thousands of images.
+Once the spatial alignment is done the images are finally ready to be resized for the actual dataset. As an intermediate step, every frame is firstly cropped as a square and then resized to 1024 before being written to disk. The trainings were run with different images sizes, all smaller than  \(1024\times1024\), by storing them like this a lot of time is saved when creating different shaped dataset as the whole alignment doesn't need to be run again and the additional whole read, resize and write procedure takes just seconds even with thousands of images.
 
 
 \begin{figure}[H]
   \centering
-  \includegraphics[scale=0.4]{figures/final_64_256.png}
+  \includegraphics[width=1\textwidth]{figures/final_64_256.png}
   \caption{Samples from the 64 to 256 dataset.}
   \label{img:64_256}
 \end{figure}
 
 \begin{figure}[H]
   \centering
-  \includegraphics[scale=0.4]{figures/final_64_256_patches.png}
+  \includegraphics[width=1\textwidth]{figures/final_64_256_patches.png}
   \caption{Samples from the 64 to 256 patches dataset.}
   \label{img:64_256_p}
 \end{figure}
 
 \begin{figure}[H]
   \centering
-  \includegraphics[scale=0.4]{figures/final_128_512.png}
+  \includegraphics[width=1\textwidth]{figures/final_128_512.png}
   \caption{Samples from the 128 to 512 dataset.}
   \label{img:128_512}
 \end{figure}
@@ -346,4 +350,4 @@ Although all the models were trained at x4 scale, to test the behavior of the ne
   \item  \(128\times128\) LR and  \(512\times512\) HR (Figure \ref{img:128_512})
 \end{itemize}
 
-The size of the datasets are 2210 training and 249 validation, for the full size one, and 8652 training 624 validation for the patches set. Due to memory constraints, it's not been possible to train every model with the 128 to 512 dataset.
+The full size dataset is composed of 2459 images (2210 for training and 249 for validation), while the patches set is composed of 8652 images for training 624 for validation.

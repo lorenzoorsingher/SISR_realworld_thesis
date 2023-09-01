@@ -10,7 +10,7 @@ Neural networks are the perfect tool for this kind of task, from a set of images
 
 The models have been chosen taking into account different characteristics. ESRGAN and Real-ESRGAN are two of the most popular models when it comes to Super Resolution, they share a similar structure and both use a GAN (Generative Adversal Network) architecture, on the other hand, HAT-L and SwinIR are transformer-based models that take a new approach to vision tasks.
 
-All models score highly in the ranking proposed by paperswithcode\cite{pwcode}, which provides a leveled field for comparing the latest models of the most common benchmark datasets.
+All models score highly in the ranking proposed by paperswithcode\cite{pwcode}, which provides a leveled field for comparing the latest models on the most common benchmark datasets.
 
 The four models are implemented in the PyTorch-based open-source image and video restoration toolbox BasicSR (Basic Super Restoration). On top of offering the various models for SR it's equipped with useful logging capabilities and metrics for evaluation.
 
@@ -42,7 +42,7 @@ connections as depicted in Figure \ref{img:RRDB}
 \label{subsec:realesrgan}
 
 Real-world degradations are usually too complex to be modeled with a simple combination of multiple degradations. Thus, models that assume an ideal bicubic
-downsampling kernel or similar degradation processes will easily fail in real-world samples. Real-ESRGAN\cite{9711325} is an expansion of the powerful ESRGAN that introduces a high-order degradation modeling process to better simulate complex real-world degradations, in addition,
+downsampling kernel or similar degradation processes will easily fail with real-world samples. Real-ESRGAN\cite{9711325} is an expansion of the powerful ESRGAN that introduces a high-order degradation modeling process to better simulate complex real-world degradations, in addition,
 it employs a U-Net discriminator with spectral normalization to increase discriminator capability and stabilize the training dynamics.
 
 \begin{figure}[H]
@@ -52,7 +52,7 @@ it employs a U-Net discriminator with spectral normalization to increase discrim
   \label{img:UNET}
 \end{figure}
 
-The authors claim that comparisons have shown superior visual performance than prior works on various real datasets. While in this project the improved degradation model won't help much since our dataset already contains real-world degradations, the improved discriminator and better pratrained weights might yield better results compared to the previous methods.
+The authors claim that comparisons have shown superior visual performance than prior works on various real datasets. While in this project the improved degradation model won't help much since our dataset already contains real-world degradations, the improved discriminator and better pratrained weights might yield superior results compared to the previous methods.
 
 \section{SwinIR}
 \label{subsec:swinir}
@@ -73,6 +73,6 @@ Transformer. SwinIR\cite{liang2021swinir} is a Swin Transformer-based model that
 \section{HAT-L}
 \label{subsec:hatl}
 
-HAT-L expands on the idea of Transformer-based methods for low-level vision tasks, such as image Super Resolution. The authors propose a novel Hybrid Attention Transformer (HAT). It combines both channel attention and window-based self-attention schemes.
+HAT-L expands on the idea of Transformer-based methods for low-level vision tasks, such as image Super Resolution. The authors propose a novel Hybrid Attention Transformer (HAT). It combines both channel attention and window-based self-attention schemes. The specifics of the improvements to the architecture are outside the scope of this project but, on top of being the most recently developed project in the rooster, the scores presented by the authors beat all the other models by a margin.
 
 
