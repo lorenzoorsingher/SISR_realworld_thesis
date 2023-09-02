@@ -3,3 +3,7 @@ bin/
 
 # Document output
 build/
+
+makesh/
+
+.vscode/
