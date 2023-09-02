@@ -7,3 +7,9 @@ build/
 makesh/
 
 .vscode/
+
+.editorconfig
+.shellcheckrc
+LICENSE
+make
+Tectonic.toml
