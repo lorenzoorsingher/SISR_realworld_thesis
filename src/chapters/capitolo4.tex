@@ -6,10 +6,10 @@ Most of the training has been done using Google Colab Pro on 16GB NVIDIA T4 and 
 All trainings were run on pre-trained weights, fine-tuning the model until no improvements could be observed on loss and metrics.
 
 \begin{itemize}
-  \item weights for ESRGAN have been pre-trained on  DIV2K\cite{Agustsson_2017_CVPR_Workshops}, Flickr2K\cite{Lim_2017_CVPR_Workshops} and OutdoorSceneTraining\cite{wang2018recovering}. It's been possible to fine-tune the model with all our datasets: 64 to 256, 64 to 256 patches and 128 to 512. For each run, it's been used batch sizes of 4 and 2 and the memory allocated was on average around 7GB for the smaller dataset and 13GB for the bigger one.
+  \item weights for ESRGAN have been pre-trained on  DIV2K \cite{Agustsson_2017_CVPR_Workshops}, Flickr2K \cite{Lim_2017_CVPR_Workshops} and OutdoorSceneTraining \cite{wang2018recovering}. It's been possible to fine-tune the model with all our datasets: 64 to 256, 64 to 256 patches and 128 to 512. For each run, it's been used batch sizes of 4 and 2 and the memory allocated was on average around 7GB for the smaller dataset and 13GB for the bigger one.
   \item Similar to ESRGAN, Real-ESRGAN comes with weights pre-trained on DIV2K, Flickr2K, and OutdoorSceneTraining. The models have been trained on all datasets and, since they share the same generator architecture, the memory allocated was similar to the numbers of ESRGAN.
   \item SwinIR provides weights pre-trained on DIV2K, just like the SRGAN-based models it's been trained on all the dataset configurations with batch sizes of 4 and 2. The memory allocated was around 8GB for the smaller dataset and 14GB for the bigger dataset.
-  \item HAT-L proved to be the heaviest of the models. It needed on average 15GB of VRAM just to run the smaller 64 to 256 dataset on a batch size of 2, for this reason, it wasn't possible to try the larger 128 to 512 dataset. The pre-trained weights provided with the model are trained with ImageNet\cite{deng2009imagenet}.
+  \item HAT-L proved to be the heaviest of the models. It needed on average 15GB of VRAM just to run the smaller 64 to 256 dataset on a batch size of 2, for this reason, it wasn't possible to try the larger 128 to 512 dataset. The pre-trained weights provided with the model are trained with ImageNet \cite{deng2009imagenet}.
 \end{itemize}
 
 \section{Metrics}
@@ -19,7 +19,7 @@ To evaluate the model performance we used three different metrics: PSNR, SSIM an
 
 \subsection{PSNR}
 \label{subsec:psnr}
-  PSNR\cite{psnr} stands for "Peak Signal-to-Noise Ratio." It is a metric used to measure the quality of a reconstructed or compressed image or video in comparison to the original, uncompressed version. PSNR is widely used in the field of image and video processing to quantify the level of distortion introduced during compression or transmission.
+  PSNR \cite{psnr} stands for "Peak Signal-to-Noise Ratio." It is a metric used to measure the quality of a reconstructed or compressed image or video in comparison to the original, uncompressed version. PSNR is widely used in the field of image and video processing to quantify the level of distortion introduced during compression or transmission.
 
   The PSNR value is calculated by comparing the maximum possible pixel value (usually 255 for an 8-bit image) to the mean squared error (MSE) between the original and the reconstructed/compressed image. The formula for calculating PSNR is as follows:
   \[
@@ -30,7 +30,7 @@ To evaluate the model performance we used three different metrics: PSNR, SSIM an
 
 \subsection{SSIM}
 \label{subsec:ssim}
-  The structural similarity index measure (SSIM\cite{ssim}) is a method for predicting the perceived quality of digital images and videos. SSIM is used for measuring the similarity between two images. The SSIM index, just like PSNR, is a full reference metric; in other words, the measurement or prediction of image quality is based on an initial uncompressed or distortion-free image as a reference. The measure between two windows \(x\) and \(y\) of common size \(N \times N\) is:
+  The structural similarity index measure (SSIM \cite{ssim}) is a method for predicting the perceived quality of digital images and videos. SSIM is used for measuring the similarity between two images. The SSIM index, just like PSNR, is a full reference metric; in other words, the measurement or prediction of image quality is based on an initial uncompressed or distortion-free image as a reference. The measure between two windows \(x\) and \(y\) of common size \(N \times N\) is:
 
 
   \begin{equation}
